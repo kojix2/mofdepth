@@ -36,11 +36,14 @@ module Depth
         end
       end
 
-      if config.path.empty?
+      if ARGV.size < 2
         STDERR.puts "Error: missing arguments: <prefix> <BAM-or-CRAM>"
         STDERR.puts "Use --help for usage information"
         exit 2
       end
+
+      config.prefix = ARGV[0]
+      config.path = ARGV[1]
 
       begin
         runner = Runner.new(config)
