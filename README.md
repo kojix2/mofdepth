@@ -1,11 +1,120 @@
-# depth
+# tanudepth
 
-[Mosdepth](https://github.com/brentp/mosdepth) Clone by VibeCoding 
+A fast BAM/CRAM depth calculation tool written in Crystal, inspired by [mosdepth](https://github.com/brentp/mosdepth).
+
+**This is an experiment to see if well-known tools can be ported to Crystal using “vibe coding”.**
+
+## Features
+
+- Fast depth calculation for BAM/CRAM files
+- Multiple processing modes (fast mode, fragment mode, CIGAR-based)
+- Per-base and region-based depth analysis
+- BED file support for custom regions
+- Window-based analysis
+- Comprehensive filtering options (MAPQ, fragment length, flags)
 
 ## Installation
 
+### Prerequisites
+
+- Crystal
+- hts-lib (for BAM/CRAM support)
+
+### Build from source
+
+```bash
+git clone https://github.com/kojix2/tanudepth
+cd tanudepth
+shards install
+crystal build src/depth.cr --release
+```
+
 ## Usage
 
-## Development
+```bash
+./depth [options] <prefix> <BAM-or-CRAM>
+```
 
-## Contributing
+### Basic example
+
+```bash
+./depth output sample.bam
+```
+
+### Options
+
+- `-t, --threads THREADS`: BAM decompression threads
+- `-c, --chrom CHROM`: Restrict to chromosome
+- `-b, --by BY`: BED file or numeric window size
+- `-n, --no-per-base`: Skip per-base output
+- `-Q, --mapq MAPQ`: MAPQ threshold
+- `-l, --min-frag-len MIN`: Minimum fragment length
+- `-u, --max-frag-len MAX`: Maximum fragment length
+- `-x, --fast-mode`: Fast mode (read start/end positions only)
+- `-a, --fragment-mode`: Count full fragment (proper pairs only)
+- `-m, --use-median`: Use median for region stats instead of mean
+- `-v, --version`: Show version
+- `-h, --help`: Show help message
+
+### Processing modes
+
+- **Default mode**: CIGAR-based depth calculation (most accurate)
+- **Fast mode** (`-x`): Uses read start/end positions (faster but less accurate)
+- **Fragment mode** (`-a`): Counts full fragments for paired-end reads
+
+**Note**: Fast mode and fragment mode cannot be used together.
+
+### Output files
+
+- `<prefix>.depth.summary.txt`: Per-chromosome summary statistics
+- `<prefix>.per-base.bed`: Per-base depth (unless `-n` is used)
+- `<prefix>.depth.global.dist.txt`: Global depth distribution
+- `<prefix>.regions.bed`: Region-based statistics (when using `-b`)
+- `<prefix>.depth.region.dist.txt`: Region depth distribution (when using `-b`)
+
+### Summary file format
+
+The summary file contains the following columns:
+
+- `chrom`: Chromosome name
+- `length`: Chromosome length
+- `sum_depth`: Total depth (sum of all depths)
+- `mean`: Mean depth
+- `min`: Minimum depth
+- `max`: Maximum depth
+
+## Examples
+
+### Basic depth calculation
+
+```bash
+./depth output sample.bam
+```
+
+### With BED regions
+
+```bash
+./depth -b regions.bed output sample.bam
+```
+
+### Window-based analysis (1kb windows)
+
+```bash
+./depth -b 1000 output sample.bam
+```
+
+### Fast mode with MAPQ filtering
+
+```bash
+./depth -x -Q 20 output sample.bam
+```
+
+### Fragment mode for paired-end data
+
+```bash
+./depth -a -l 100 -u 1000 output sample.bam
+```
+
+## License
+
+MIT License
