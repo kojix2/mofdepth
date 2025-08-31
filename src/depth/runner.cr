@@ -27,11 +27,11 @@ module Depth
         raise "Failed to load index for #{@config.path}: #{ex.message}"
       end
 
-      region = IO.parse_region_str(@config.chrom)
+      region = FileIO.parse_region_str(@config.chrom)
       opts = @config.to_options
 
       # Create output manager
-      output = IO::OutputManager.new(@config.prefix)
+      output = FileIO::OutputManager.new(@config.prefix)
       output.create_files(@config.no_per_base, @config.has_regions?)
 
       begin
@@ -58,7 +58,7 @@ module Depth
         bed_map : Hash(String, Array(Core::Region))? = nil
         window = @config.window_size
         if bed_path = @config.bed_path
-          bed_map = IO.read_bed(bed_path)
+          bed_map = FileIO.read_bed(bed_path)
         end
 
         # Create coverage calculator
@@ -128,7 +128,7 @@ module Depth
 
     private def process_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
                                 window : Int32, bed_map : Hash(String, Array(Core::Region))?,
-                                cs : Stats::CountStat(Int32), output : IO::OutputManager,
+                                cs : Stats::CountStat(Int32), output : FileIO::OutputManager,
                                 region_dist : Array(Int64))
       if window > 0
         process_window_regions(t, coverage, tid, window, cs, output, region_dist)
@@ -139,7 +139,7 @@ module Depth
 
     private def process_window_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
                                        window : Int32, cs : Stats::CountStat(Int32),
-                                       output : IO::OutputManager, region_dist : Array(Int64))
+                                       output : FileIO::OutputManager, region_dist : Array(Int64))
       start = 0
       while start < t.length
         stop = Math.min(start + window, t.length)
@@ -167,7 +167,7 @@ module Depth
 
     private def process_bed_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
                                     bed_map : Hash(String, Array(Core::Region))?,
-                                    cs : Stats::CountStat(Int32), output : IO::OutputManager,
+                                    cs : Stats::CountStat(Int32), output : FileIO::OutputManager,
                                     region_dist : Array(Int64))
       regs = bed_map.try(&.[t.name]?) || [] of Core::Region
       regs.each do |r|

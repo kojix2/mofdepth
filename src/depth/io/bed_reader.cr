@@ -1,6 +1,6 @@
 require "../core/types"
 
-module Depth::IO
+module Depth::FileIO
   # Parse region like: chr1, chr1:100-200, or BED line
   def self.parse_region_str(s : String) : Depth::Core::Region?
     return nil if s.empty? || s == "nil"

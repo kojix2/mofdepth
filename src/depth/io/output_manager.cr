@@ -1,6 +1,6 @@
 require "../stats/depth_stat"
 
-module Depth::IO
+module Depth::FileIO
   class OutputManager
     @f_summary : File?
     @f_global : File?
