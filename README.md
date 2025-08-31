@@ -1,5 +1,9 @@
 # tanudepth
 
+[![build](https://github.com/kojix2/tanudepth/actions/workflows/build.yml/badge.svg)](https://github.com/kojix2/tanudepth/actions/workflows/build.yml)
+[![Lines of Code](https://img.shields.io/endpoint?url=https%3A%2F%2Ftokei.kojix2.net%2Fbadge%2Fgithub%2Fkojix2%2Ftanudepth%2Flines)](https://tokei.kojix2.net/github/kojix2/tanudepth)
+![Static Badge](https://img.shields.io/badge/PURE-VIBE_CODING-magenta)
+
 A fast BAM/CRAM depth calculation tool written in Crystal, inspired by [mosdepth](https://github.com/brentp/mosdepth).
 
 **This is an experiment to see if well-known tools can be ported to Crystal using “vibe coding”.**
