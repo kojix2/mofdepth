@@ -51,7 +51,7 @@ module Depth
       rescue ex : FileNotFoundError
         STDERR.puts "File not found: #{ex.message}"
         exit 1
-      rescue ex : IndexError
+      rescue ex : BamIndexError
         STDERR.puts "Index error: #{ex.message}"
         exit 1
       rescue ex : Exception

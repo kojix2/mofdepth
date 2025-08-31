@@ -9,5 +9,5 @@ module Depth
 
   class ConfigurationError < Error; end
 
-  class IndexError < Error; end
+  class BamIndexError < Error; end
 end
