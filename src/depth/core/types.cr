@@ -1,11 +1,11 @@
 module Depth::Core
-  MAX_COVERAGE = 400_000
-  UNKNOWN_CHROM_TID = -999
-  
+  MAX_COVERAGE      = 400_000
+  UNKNOWN_CHROM_TID =    -999
+
   enum CoverageResult
-    ChromNotFound = -1
-    NoData = -2
-    AllChroms = -42
+    ChromNotFound =  -1
+    NoData        =  -2
+    AllChroms     = -42
   end
 
   struct Target

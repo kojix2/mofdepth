@@ -17,12 +17,12 @@ module Depth::Core
       return true if rec.isize.abs > @options.max_frag_len
       return true if (rec.flag.value & @options.exclude_flag) != 0
       return true if @options.include_flag != 0 && (rec.flag.value & @options.include_flag) == 0
-      
+
       if @options.read_groups.any?
         rg = rec.aux("RG")
         return true unless rg.is_a?(String) && @options.read_groups.includes?(rg)
       end
-      
+
       false
     end
 
@@ -57,11 +57,11 @@ module Depth::Core
     private def process_region_query(a : Coverage, r : Region, tid : Int32) : {Bool, Int32}
       found = false
       chrom_tid = UNKNOWN_CHROM_TID
-      
+
       q_start = (r.start > 0 ? r.start : 0)
       q_stop = (r.stop > 0 ? r.stop : @bam.header.target_len[tid].to_i32)
       region_str = "#{r.chrom}:#{q_start + 1}-#{q_stop}"
-      
+
       @bam.query(region_str) do |rec|
         unless found
           chrom_len = if tid >= 0
@@ -77,7 +77,7 @@ module Depth::Core
         next if should_skip_record?(rec)
         calculate_record_coverage(rec, a)
       end
-      
+
       {found, chrom_tid}
     end
 
@@ -86,13 +86,13 @@ module Depth::Core
       found = false
       chrom_tid = UNKNOWN_CHROM_TID
       current_tid = Int32::MIN
-      
+
       @bam.each(copy: false) do |rec|
         # Break if we encounter a different chromosome to prevent array corruption
         if current_tid != Int32::MIN && rec.tid != current_tid
           break
         end
-        
+
         unless found
           chrom_tid = (tid >= 0) ? tid : rec.tid
           current_tid = chrom_tid
@@ -104,7 +104,7 @@ module Depth::Core
         next if should_skip_record?(rec)
         calculate_record_coverage(rec, a)
       end
-      
+
       {found, chrom_tid}
     end
 

@@ -72,7 +72,7 @@ module Depth
           end
 
           coverage = Core::Coverage.new(t.length + 1, 0)
-          
+
           # Determine query region
           query_region = if region && t.name == region.not_nil!.chrom
                            region.not_nil!
@@ -121,16 +121,15 @@ module Depth
           end
           global_dist.fill(0_i64)
         end
-
       ensure
         output.close_all
       end
     end
 
-    private def process_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32, 
-                               window : Int32, bed_map : Hash(String, Array(Core::Region))?, 
-                               cs : Stats::CountStat(Int32), output : IO::OutputManager, 
-                               region_dist : Array(Int64))
+    private def process_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
+                                window : Int32, bed_map : Hash(String, Array(Core::Region))?,
+                                cs : Stats::CountStat(Int32), output : IO::OutputManager,
+                                region_dist : Array(Int64))
       if window > 0
         process_window_regions(t, coverage, tid, window, cs, output, region_dist)
       else
@@ -139,8 +138,8 @@ module Depth
     end
 
     private def process_window_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
-                                     window : Int32, cs : Stats::CountStat(Int32), 
-                                     output : IO::OutputManager, region_dist : Array(Int64))
+                                       window : Int32, cs : Stats::CountStat(Int32),
+                                       output : IO::OutputManager, region_dist : Array(Int64))
       start = 0
       while start < t.length
         stop = Math.min(start + window, t.length)
@@ -167,9 +166,9 @@ module Depth
     end
 
     private def process_bed_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
-                                  bed_map : Hash(String, Array(Core::Region))?, 
-                                  cs : Stats::CountStat(Int32), output : IO::OutputManager, 
-                                  region_dist : Array(Int64))
+                                    bed_map : Hash(String, Array(Core::Region))?,
+                                    cs : Stats::CountStat(Int32), output : IO::OutputManager,
+                                    region_dist : Array(Int64))
       regs = bed_map.try(&.[t.name]?) || [] of Core::Region
       regs.each do |r|
         me = 0.0

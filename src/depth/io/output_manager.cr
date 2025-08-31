@@ -34,7 +34,7 @@ module Depth::IO
         @f_summary.not_nil! << ["chrom", "length", "bases", "mean", "min", "max"].join("\t") << '\n'
         @header_written = true
       end
-      
+
       mean = stat.cum_length > 0 ? stat.cum_depth.to_f / stat.cum_length : 0.0
       minv = stat.min_depth == Int32::MAX ? 0 : stat.min_depth
       @f_summary.not_nil! << [region, stat.cum_length, stat.cum_depth, mean, minv, stat.max_depth].join("\t") << '\n'

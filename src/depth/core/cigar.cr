@@ -53,7 +53,7 @@ module Depth::Core
     # Yield intervals [start, stop) with constant depth value
     def each_depth_interval(a : Coverage, stop_at : Int32 = -1, &)
       return if a.size <= 1
-      
+
       last_depth = Int32::MIN
       last_i = 0
       i = 0
