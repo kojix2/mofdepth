@@ -31,13 +31,13 @@ module Depth::FileIO
       return unless @f_summary
 
       unless @header_written
-        @f_summary.not_nil! << ["chrom", "length", "bases", "mean", "min", "max"].join("\t") << '\n'
+        @f_summary.not_nil! << ["chrom", "length", "sum_depth", "mean", "min", "max"].join("\t") << '\n'
         @header_written = true
       end
 
-      mean = stat.cum_length > 0 ? stat.cum_depth.to_f / stat.cum_length : 0.0
+      mean = stat.n_bases > 0 ? stat.sum_depth.to_f / stat.n_bases : 0.0
       minv = stat.min_depth == Int32::MAX ? 0 : stat.min_depth
-      @f_summary.not_nil! << [region, stat.cum_length, stat.cum_depth, mean, minv, stat.max_depth].join("\t") << '\n'
+      @f_summary.not_nil! << [region, stat.n_bases, stat.sum_depth, mean, minv, stat.max_depth].join("\t") << '\n'
     end
 
     def write_per_base_interval(chrom : String, start : Int32, stop : Int32, depth : Int32)
@@ -45,7 +45,7 @@ module Depth::FileIO
       @f_perbase.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << depth << "\n"
     end
 
-    def write_region_line(chrom : String, start : Int32, stop : Int32, name : String?, value : Float64)
+    def write_region_stat(chrom : String, start : Int32, stop : Int32, name : String?, value : Float64)
       return unless @f_regions
       if name
         @f_regions.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << name << "\t" << value << "\n"

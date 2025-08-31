@@ -52,7 +52,7 @@ module Depth
         global_dist = Array(Int64).new(512, 0_i64)
         region_dist = Array(Int64).new(512, 0_i64)
         global_stat = Stats::DepthStat.new
-        cs = Stats::CountStat(Int32).new(@config.use_median ? 65_536 : 0)
+        cs = Stats::IntHistogram.new(@config.use_median ? 65_536 : 0)
 
         # Handle window/BED regions
         bed_map : Hash(String, Array(Core::Region))? = nil
@@ -62,7 +62,7 @@ module Depth
         end
 
         # Create coverage calculator
-        calculator = Core::CoverageCalculator.new(bam, opts)
+        calculator = Core::CoverageBuilder.new(bam, opts)
 
         # Process each target
         sub_targets.each_with_index do |t, idx|
@@ -84,7 +84,7 @@ module Depth
           next if tid == Core::CoverageResult::ChromNotFound.value
 
           if tid != Core::CoverageResult::NoData.value
-            self.class.cumsum!(coverage)
+            self.class.prefix_sum!(coverage)
           end
 
           # Write per-base intervals
@@ -92,7 +92,7 @@ module Depth
             if tid == Core::CoverageResult::NoData.value
               output.write_per_base_interval(t.name, 0, t.length, 0)
             else
-              self.class.each_depth_interval(coverage) do |(s, e, v)|
+              self.class.each_constant_segment(coverage) do |(s, e, v)|
                 output.write_per_base_interval(t.name, s, e, v)
               end
             end
@@ -128,7 +128,7 @@ module Depth
 
     private def process_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
                                 window : Int32, bed_map : Hash(String, Array(Core::Region))?,
-                                cs : Stats::CountStat(Int32), output : FileIO::OutputManager,
+                                cs : Stats::IntHistogram, output : FileIO::OutputManager,
                                 region_dist : Array(Int64))
       if window > 0
         process_window_regions(t, coverage, tid, window, cs, output, region_dist)
@@ -138,7 +138,7 @@ module Depth
     end
 
     private def process_window_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
-                                       window : Int32, cs : Stats::CountStat(Int32),
+                                       window : Int32, cs : Stats::IntHistogram,
                                        output : FileIO::OutputManager, region_dist : Array(Int64))
       start = 0
       while start < t.length
@@ -156,7 +156,7 @@ module Depth
             me = (sum.to_f / len)
           end
         end
-        output.write_region_line(t.name, start, stop, nil, me)
+        output.write_region_stat(t.name, start, stop, nil, me)
         if tid != Core::CoverageResult::NoData.value
           idx = [me.to_i, region_dist.size - 1].min
           region_dist[idx] += 1
@@ -167,7 +167,7 @@ module Depth
 
     private def process_bed_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
                                     bed_map : Hash(String, Array(Core::Region))?,
-                                    cs : Stats::CountStat(Int32), output : FileIO::OutputManager,
+                                    cs : Stats::IntHistogram, output : FileIO::OutputManager,
                                     region_dist : Array(Int64))
       regs = bed_map.try(&.[t.name]?) || [] of Core::Region
       regs.each do |r|
@@ -184,7 +184,7 @@ module Depth
             me = len > 0 ? sum.to_f / len : 0.0
           end
         end
-        output.write_region_line(t.name, r.start, r.stop, r.name, me)
+        output.write_region_stat(t.name, r.start, r.stop, r.name, me)
         if tid != Core::CoverageResult::NoData.value && @config.window_size == 0
           self.class.bump_distribution!(region_dist, coverage, r.start, r.stop)
         end

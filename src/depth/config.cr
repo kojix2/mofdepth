@@ -25,6 +25,10 @@ module Depth
       if min_frag_len >= 0 && max_frag_len >= 0 && min_frag_len > max_frag_len
         raise ArgumentError.new("min_frag_len cannot be greater than max_frag_len")
       end
+
+      if fast_mode && fragment_mode
+        raise ArgumentError.new("--fast-mode and --fragment-mode cannot be used together")
+      end
     end
 
     def to_options : Core::Options

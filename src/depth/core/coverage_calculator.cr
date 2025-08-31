@@ -3,7 +3,7 @@ require "./types"
 require "./cigar"
 
 module Depth::Core
-  class CoverageCalculator
+  class CoverageBuilder
     extend Cigar
     extend CoverageUtils
 
@@ -11,7 +11,7 @@ module Depth::Core
     end
 
     # Check if record should be filtered out
-    private def should_skip_record?(rec) : Bool
+    private def filtered_out?(rec) : Bool
       return true if rec.mapq < @options.mapq
 
       if @options.fragment_mode
@@ -31,7 +31,7 @@ module Depth::Core
     end
 
     # Calculate coverage for a single record
-    private def calculate_record_coverage(rec, coverage : Coverage)
+    private def accumulate_record!(rec, coverage : Coverage)
       if @options.fast_mode
         start_pos = rec.pos.clamp(0, coverage.size - 1)
         coverage[start_pos] += 1
@@ -78,8 +78,8 @@ module Depth::Core
           found = true
         end
 
-        next if should_skip_record?(rec)
-        calculate_record_coverage(rec, a)
+        next if filtered_out?(rec)
+        accumulate_record!(rec, a)
       end
 
       {found, chrom_tid}
@@ -105,8 +105,8 @@ module Depth::Core
           found = true
         end
 
-        next if should_skip_record?(rec)
-        calculate_record_coverage(rec, a)
+        next if filtered_out?(rec)
+        accumulate_record!(rec, a)
       end
 
       {found, chrom_tid}

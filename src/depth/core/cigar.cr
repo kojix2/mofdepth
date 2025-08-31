@@ -40,7 +40,7 @@ module Depth::Core
 
   module CoverageUtils
     # Utility function for cumulative sum
-    def cumsum!(a : Coverage)
+    def prefix_sum!(a : Coverage)
       sum = 0
       i = 0
       while i < a.size
@@ -51,7 +51,7 @@ module Depth::Core
     end
 
     # Yield intervals [start, stop) with constant depth value
-    def each_depth_interval(a : Coverage, stop_at : Int32 = -1, &)
+    def each_constant_segment(a : Coverage, stop_at : Int32 = -1, &)
       return if a.size <= 1
 
       last_depth = Int32::MIN

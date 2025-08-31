@@ -1,11 +1,11 @@
 module Depth::Stats
   # Histogram-based median for integers
-  class CountStat(T)
+  class IntHistogram
     getter counts : Array(Int32)
     getter n : Int32 = 0
 
     def initialize(size : Int32 = 65_536)
-      @counts = Array(Int32).new(size, 0)
+      @counts = size > 0 ? Array(Int32).new(size, 0) : [] of Int32
       @n = 0
     end
 
