@@ -1,7 +1,8 @@
 require "./spec_helper"
+require "../src/depth/version"
 
 describe Depth do
   it "has a version number" do
-    expect(Depth::VERSION).not_to be_nil
+    Depth::VERSION.should be_a(String)
   end
 end
