@@ -1,0 +1,6 @@
+version: 2.0
+shards:
+  hts:
+    git: https://github.com/bio-cr/hts.cr.git
+    version: 0.0.3+git.commit.eafbeb4d6de58e661a300355c848bba4889df7d9
+
