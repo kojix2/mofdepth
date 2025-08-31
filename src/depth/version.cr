@@ -1,0 +1,3 @@
+module Depth
+  VERSION = "0.0.0"
+end
