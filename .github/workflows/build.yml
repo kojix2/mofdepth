@@ -15,12 +15,12 @@ jobs:
         include:
           - os: ubuntu-latest
             target: x86_64-unknown-linux-musl
-          - os: macos-13
-            target: x86_64-apple-darwin
-          - os: macos-latest
-            target: aarch64-apple-darwin
-          - os: windows-latest
-            target: x86_64-pc-windows-gnu
+            # - os: macos-13
+            #   target: x86_64-apple-darwin
+            # - os: macos-latest
+            #   target: aarch64-apple-darwin
+            # - os: windows-latest
+            #   target: x86_64-pc-windows-gnu
     runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
@@ -41,6 +41,7 @@ jobs:
           msystem: MINGW64
           update: true
           install: >-
+            git
             mingw-w64-x86_64-crystal
             mingw-w64-x86_64-shards
             mingw-w64-x86_64-htslib
@@ -94,7 +95,13 @@ jobs:
         run: |
           mkdir -p bin
           docker run -d --name alpine -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine tail -f /dev/null
-          docker exec alpine apk add htslib-static
+          docker exec alpine apk add --no-cache autoconf automake libtool build-base bzip2-dev bzip2-static
+          docker exec alpine sh -c "
+            git clone --depth 1 --branch develop https://github.com/samtools/htslib.git htslib &&
+            cd htslib &&
+            git submodule update --init --recursive &&
+            autoreconf -i && ./configure && make && make install
+            "
           docker exec alpine shards install --without-development --release --static
           docker exec alpine shards build --release --static
           docker exec alpine chmod +x bin/$BIN
@@ -114,14 +121,20 @@ jobs:
         run: |
           shards install --without-development --release
           brew update
-          brew install libgc pcre2 htslib
+          brew install libgc pcre2 htslib xz libdeflate zlib curl libidn2
+          brew ls libidn2
           echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
           unset PKG_CONFIG_PATH
           echo "cleared PKG_CONFIG_PATH to avoid openSSL conflicts"
           ln -s $(brew ls libgc | grep libgc.a) .
           ln -s $(brew ls pcre2 | grep libpcre2-8.a) .
           ln -s $(brew ls htslib | grep libhts.a) .
-          STATIC_LIBS="-L $(pwd) $(pwd)/libgc.a $(pwd)/libpcre2-8.a $(pwd)/libhts.a"
+          ln -s $(brew ls xz | grep liblzma.a) .
+          ln -s $(brew ls libdeflate | grep libdeflate.a) .
+          ln -s $(brew ls zlib | grep libz.a) .
+          ln -s $(brew ls curl | grep libcurl.a) .
+          ln -s $(brew ls libidn2 | grep libidn2.a) .
+          STATIC_LIBS="-L $(pwd) $(pwd)/libgc.a $(pwd)/libpcre2-8.a $(pwd)/libhts.a $(pwd)/liblzma.a $(pwd)/libdeflate.a $(pwd)/libz.a $(pwd)/libcurl.a $(pwd)/libidn2.a"
           shards build --link-flags="$STATIC_LIBS" --release
           chmod +x bin/$BIN
           otool -L bin/$BIN
