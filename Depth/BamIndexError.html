@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../js/doc.js"></script>
 
   <meta name="repository-name" content="mos">
-  <title>Depth::IO - mos main</title>
+  <title>Depth::BamIndexError - mos main</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../";
   </script>
@@ -62,6 +62,11 @@
       
         <ul>
   
+  <li class=" current" data-id="mos/Depth/BamIndexError" data-name="depth::bamindexerror">
+      <a href="../Depth/BamIndexError.html">BamIndexError</a>
+      
+    </li>
+  
   <li class=" " data-id="mos/Depth/CLI" data-name="depth::cli">
       <a href="../Depth/CLI.html">CLI</a>
       
@@ -92,8 +97,8 @@
       
     </li>
   
-  <li class=" " data-id="mos/Depth/Core/CoverageCalculator" data-name="depth::core::coveragecalculator">
-      <a href="../Depth/Core/CoverageCalculator.html">CoverageCalculator</a>
+  <li class=" " data-id="mos/Depth/Core/CoverageBuilder" data-name="depth::core::coveragebuilder">
+      <a href="../Depth/Core/CoverageBuilder.html">CoverageBuilder</a>
       
     </li>
   
@@ -137,33 +142,28 @@
       
     </li>
   
-  <li class=" " data-id="mos/Depth/FileNotFoundError" data-name="depth::filenotfounderror">
-      <a href="../Depth/FileNotFoundError.html">FileNotFoundError</a>
-      
-    </li>
-  
-  <li class=" " data-id="mos/Depth/IndexError" data-name="depth::indexerror">
-      <a href="../Depth/IndexError.html">IndexError</a>
-      
-    </li>
-  
-  <li class=" " data-id="mos/Depth/InvalidRegionError" data-name="depth::invalidregionerror">
-      <a href="../Depth/InvalidRegionError.html">InvalidRegionError</a>
-      
-    </li>
-  
-  <li class="parent open current" data-id="mos/Depth/IO" data-name="depth::io">
-      <a href="../Depth/IO.html">IO</a>
+  <li class="parent " data-id="mos/Depth/FileIO" data-name="depth::fileio">
+      <a href="../Depth/FileIO.html">FileIO</a>
       
         <ul>
   
-  <li class=" " data-id="mos/Depth/IO/OutputManager" data-name="depth::io::outputmanager">
-      <a href="../Depth/IO/OutputManager.html">OutputManager</a>
+  <li class=" " data-id="mos/Depth/FileIO/OutputManager" data-name="depth::fileio::outputmanager">
+      <a href="../Depth/FileIO/OutputManager.html">OutputManager</a>
       
     </li>
   
 </ul>
 
+      
+    </li>
+  
+  <li class=" " data-id="mos/Depth/FileNotFoundError" data-name="depth::filenotfounderror">
+      <a href="../Depth/FileNotFoundError.html">FileNotFoundError</a>
+      
+    </li>
+  
+  <li class=" " data-id="mos/Depth/InvalidRegionError" data-name="depth::invalidregionerror">
+      <a href="../Depth/InvalidRegionError.html">InvalidRegionError</a>
       
     </li>
   
@@ -177,11 +177,6 @@
       
         <ul>
   
-  <li class=" " data-id="mos/Depth/Stats/CountStat" data-name="depth::stats::countstat(t)">
-      <a href="../Depth/Stats/CountStat.html">CountStat</a>
-      
-    </li>
-  
   <li class=" " data-id="mos/Depth/Stats/DepthStat" data-name="depth::stats::depthstat">
       <a href="../Depth/Stats/DepthStat.html">DepthStat</a>
       
@@ -189,6 +184,11 @@
   
   <li class=" " data-id="mos/Depth/Stats/Distribution" data-name="depth::stats::distribution">
       <a href="../Depth/Stats/Distribution.html">Distribution</a>
+      
+    </li>
+  
+  <li class=" " data-id="mos/Depth/Stats/IntHistogram" data-name="depth::stats::inthistogram">
+      <a href="../Depth/Stats/IntHistogram.html">IntHistogram</a>
       
     </li>
   
@@ -212,11 +212,13 @@
 <h1 class="type-name">
 
   <span class="kind">
-    module
-  </span> Depth::<wbr>IO
+    class
+  </span> Depth::<wbr>BamIndexError
 
 </h1>
 
+
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../Depth/BamIndexError.html">Depth::BamIndexError</a></li><li class="superclass"><a href="../Depth/Error.html">Depth::Error</a></li><li class="superclass">Exception</li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
@@ -246,15 +248,8 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/io/bed_reader.cr#L3" target="_blank">
-        depth/io/bed_reader.cr
-      </a>
-    
-    <br/>
-  
-    
-      <a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/io/output_manager.cr#L3" target="_blank">
-        depth/io/output_manager.cr
+      <a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/errors.cr#L12" target="_blank">
+        depth/errors.cr
       </a>
     
     <br/>
@@ -267,32 +262,6 @@
   
 
   
-  <h2>
-    <a id="class-method-summary" class="anchor" href="#class-method-summary">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Summary
-  </h2>
-  <ul class="list-summary">
-    
-      <li class="entry-summary">
-        <a href="#parse_region_str%28s%3AString%29%3ADepth%3A%3ACore%3A%3ARegion%7CNil-class-method" class="signature"><strong>.parse_region_str</strong>(s : String) : Depth::Core::Region | Nil</a>
-        
-          <div class="summary"><p>Parse region like: chr1, chr1:100-200, or BED line</p></div>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#read_bed%28path%3AString%29%3AHash%28String%2CArray%28Depth%3A%3ACore%3A%3ARegion%29%29-class-method" class="signature"><strong>.read_bed</strong>(path : String) : Hash(String, Array(Depth::Core::Region))</a>
-        
-          <div class="summary"><p>BED reader → {chrom =&gt; [Region]}</p></div>
-        
-      </li>
-    
-  </ul>
-
 
   
 
@@ -301,63 +270,63 @@
 
   <div class="methods-inherited">
     
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
+      
+
+
+      
+
+
+      
+
+
+      
+
+
+    
   </div>
 
   
 
   
-  <h2>
-    <a id="class-method-detail" class="anchor" href="#class-method-detail">
-  <svg class="octicon-link" aria-hidden="true">
-    <use href="#octicon-link"/>
-  </svg>
-</a>
-    Class Method Detail
-  </h2>
-  
-    <div class="entry-detail" id="parse_region_str(s:String):Depth::Core::Region|Nil-class-method">
-      <div class="signature">
-        
-        def self.<strong>parse_region_str</strong>(s : String) : <a href="../Depth/Core/Region.html">Depth::Core::Region</a> | Nil
-
-        <a class="method-permalink" href="#parse_region_str%28s%3AString%29%3ADepth%3A%3ACore%3A%3ARegion%7CNil-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>Parse region like: chr1, chr1:100-200, or BED line</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/io/bed_reader.cr#L5" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="read_bed(path:String):Hash(String,Array(Depth::Core::Region))-class-method">
-      <div class="signature">
-        
-        def self.<strong>read_bed</strong>(path : String) : Hash(String, Array(<a href="../Depth/Core/Region.html">Depth::Core::Region</a>))
-
-        <a class="method-permalink" href="#read_bed%28path%3AString%29%3AHash%28String%2CArray%28Depth%3A%3ACore%3A%3ARegion%29%29-class-method">#</a>
-      </div>
-      
-        <div class="doc">
-          
-          <p>BED reader → {chrom =&gt; [Region]}</p>
-        </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/io/bed_reader.cr#L21" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-
 
   
 

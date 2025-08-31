@@ -14,7 +14,7 @@
 <script type="text/javascript" src="../../js/doc.js"></script>
 
   <meta name="repository-name" content="mos">
-  <title>Depth::Core::CoverageCalculator - mos main</title>
+  <title>Depth::Stats::IntHistogram - mos main</title>
   <script type="text/javascript">
     CrystalDocs.base_path = "../../";
   </script>
@@ -62,6 +62,11 @@
       
         <ul>
   
+  <li class=" " data-id="mos/Depth/BamIndexError" data-name="depth::bamindexerror">
+      <a href="../../Depth/BamIndexError.html">BamIndexError</a>
+      
+    </li>
+  
   <li class=" " data-id="mos/Depth/CLI" data-name="depth::cli">
       <a href="../../Depth/CLI.html">CLI</a>
       
@@ -77,7 +82,7 @@
       
     </li>
   
-  <li class="parent open current" data-id="mos/Depth/Core" data-name="depth::core">
+  <li class="parent " data-id="mos/Depth/Core" data-name="depth::core">
       <a href="../../Depth/Core.html">Core</a>
       
         <ul>
@@ -92,8 +97,8 @@
       
     </li>
   
-  <li class=" current" data-id="mos/Depth/Core/CoverageCalculator" data-name="depth::core::coveragecalculator">
-      <a href="../../Depth/Core/CoverageCalculator.html">CoverageCalculator</a>
+  <li class=" " data-id="mos/Depth/Core/CoverageBuilder" data-name="depth::core::coveragebuilder">
+      <a href="../../Depth/Core/CoverageBuilder.html">CoverageBuilder</a>
       
     </li>
   
@@ -137,28 +142,13 @@
       
     </li>
   
-  <li class=" " data-id="mos/Depth/FileNotFoundError" data-name="depth::filenotfounderror">
-      <a href="../../Depth/FileNotFoundError.html">FileNotFoundError</a>
-      
-    </li>
-  
-  <li class=" " data-id="mos/Depth/IndexError" data-name="depth::indexerror">
-      <a href="../../Depth/IndexError.html">IndexError</a>
-      
-    </li>
-  
-  <li class=" " data-id="mos/Depth/InvalidRegionError" data-name="depth::invalidregionerror">
-      <a href="../../Depth/InvalidRegionError.html">InvalidRegionError</a>
-      
-    </li>
-  
-  <li class="parent " data-id="mos/Depth/IO" data-name="depth::io">
-      <a href="../../Depth/IO.html">IO</a>
+  <li class="parent " data-id="mos/Depth/FileIO" data-name="depth::fileio">
+      <a href="../../Depth/FileIO.html">FileIO</a>
       
         <ul>
   
-  <li class=" " data-id="mos/Depth/IO/OutputManager" data-name="depth::io::outputmanager">
-      <a href="../../Depth/IO/OutputManager.html">OutputManager</a>
+  <li class=" " data-id="mos/Depth/FileIO/OutputManager" data-name="depth::fileio::outputmanager">
+      <a href="../../Depth/FileIO/OutputManager.html">OutputManager</a>
       
     </li>
   
@@ -167,20 +157,25 @@
       
     </li>
   
+  <li class=" " data-id="mos/Depth/FileNotFoundError" data-name="depth::filenotfounderror">
+      <a href="../../Depth/FileNotFoundError.html">FileNotFoundError</a>
+      
+    </li>
+  
+  <li class=" " data-id="mos/Depth/InvalidRegionError" data-name="depth::invalidregionerror">
+      <a href="../../Depth/InvalidRegionError.html">InvalidRegionError</a>
+      
+    </li>
+  
   <li class=" " data-id="mos/Depth/Runner" data-name="depth::runner">
       <a href="../../Depth/Runner.html">Runner</a>
       
     </li>
   
-  <li class="parent " data-id="mos/Depth/Stats" data-name="depth::stats">
+  <li class="parent open current" data-id="mos/Depth/Stats" data-name="depth::stats">
       <a href="../../Depth/Stats.html">Stats</a>
       
         <ul>
-  
-  <li class=" " data-id="mos/Depth/Stats/CountStat" data-name="depth::stats::countstat(t)">
-      <a href="../../Depth/Stats/CountStat.html">CountStat</a>
-      
-    </li>
   
   <li class=" " data-id="mos/Depth/Stats/DepthStat" data-name="depth::stats::depthstat">
       <a href="../../Depth/Stats/DepthStat.html">DepthStat</a>
@@ -189,6 +184,11 @@
   
   <li class=" " data-id="mos/Depth/Stats/Distribution" data-name="depth::stats::distribution">
       <a href="../../Depth/Stats/Distribution.html">Distribution</a>
+      
+    </li>
+  
+  <li class=" current" data-id="mos/Depth/Stats/IntHistogram" data-name="depth::stats::inthistogram">
+      <a href="../../Depth/Stats/IntHistogram.html">IntHistogram</a>
       
     </li>
   
@@ -213,39 +213,34 @@
 
   <span class="kind">
     class
-  </span> Depth::<wbr>Core::<wbr>CoverageCalculator
+  </span> Depth::<wbr>Stats::<wbr>IntHistogram
 
 </h1>
 
 
-  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Depth/Core/CoverageCalculator.html">Depth::Core::CoverageCalculator</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
-
-
-
-
-
-
-
-
+  <ul class="superclass-hierarchy"><li class="superclass"><a href="../../Depth/Stats/IntHistogram.html">Depth::Stats::IntHistogram</a></li><li class="superclass">Reference</li><li class="superclass">Object</li></ul>
 
 
 
 
   <h2>
-    <a id="extended-modules" class="anchor" href="#extended-modules">
+    <a id="overview" class="anchor" href="#overview">
   <svg class="octicon-link" aria-hidden="true">
     <use href="#octicon-link"/>
   </svg>
 </a>
-    Extended Modules
+    Overview
   </h2>
-  <ul class="other-types-list">
-    
-      <li class="other-type"><a href="../../Depth/Core/Cigar.html">Depth::Core::Cigar</a></li>
-    
-      <li class="other-type"><a href="../../Depth/Core/CoverageUtils.html">Depth::Core::CoverageUtils</a></li>
-    
-  </ul>
+
+  <p>Histogram-based median for integers</p>
+
+
+
+
+
+
+
+
 
 
 
@@ -264,8 +259,8 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/core/coverage_calculator.cr#L6" target="_blank">
-        depth/core/coverage_calculator.cr
+      <a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L3" target="_blank">
+        depth/stats/count_stat.cr
       </a>
     
     <br/>
@@ -287,7 +282,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28bam%3AHTS%3A%3ABam%2Coptions%3AOptions%29-class-method" class="signature"><strong>.new</strong>(bam : HTS::Bam, options : Options)</a>
+        <a href="#new%28size%3AInt32%3D65536%29-class-method" class="signature"><strong>.new</strong>(size : Int32 = <span class="n">65536</span>)</a>
         
       </li>
     
@@ -310,16 +305,27 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#calculate%28a%3ACoverage%2Cr%3ARegion%7CNil%29%3AInt32-instance-method" class="signature"><strong>#calculate</strong>(a : Coverage, r : Region | Nil) : Int32</a>
-        
-          <div class="summary"><p>Returns: CoverageResult enum values or tid</p></div>
+        <a href="#add%28value%3AInt32%29-instance-method" class="signature"><strong>#add</strong>(value : Int32)</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#initialize_coverage_array%28coverage%3ACoverage%2Cchrom_len%3AInt32%29-instance-method" class="signature"><strong>#initialize_coverage_array</strong>(coverage : Coverage, chrom_len : Int32)</a>
+        <a href="#clear-instance-method" class="signature"><strong>#clear</strong></a>
         
-          <div class="summary"><p>Initialize coverage array for a chromosome</p></div>
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#counts%3AArray%28Int32%29-instance-method" class="signature"><strong>#counts</strong> : Array(Int32)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#median%3AInt32-instance-method" class="signature"><strong>#median</strong> : Int32</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#n%3AInt32-instance-method" class="signature"><strong>#n</strong> : Int32</a>
         
       </li>
     
@@ -367,18 +373,18 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(bam:HTS::Bam,options:Options)-class-method">
+    <div class="entry-detail" id="new(size:Int32=65536)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(bam : HTS::Bam, options : <a href="../../Depth/Core/Options.html">Options</a>)
+        def self.<strong>new</strong>(size : Int32 = <span class="n">65536</span>)
 
-        <a class="method-permalink" href="#new%28bam%3AHTS%3A%3ABam%2Coptions%3AOptions%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28size%3AInt32%3D65536%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/core/coverage_calculator.cr#L10" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L7" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -399,44 +405,82 @@
     Instance Method Detail
   </h2>
   
-    <div class="entry-detail" id="calculate(a:Coverage,r:Region|Nil):Int32-instance-method">
+    <div class="entry-detail" id="add(value:Int32)-instance-method">
       <div class="signature">
         
-        def <strong>calculate</strong>(a : <a href="../../Depth/Core/Coverage.html">Coverage</a>, r : <a href="../../Depth/Core/Region.html">Region</a> | Nil) : Int32
+        def <strong>add</strong>(value : Int32)
 
-        <a class="method-permalink" href="#calculate%28a%3ACoverage%2Cr%3ARegion%7CNil%29%3AInt32-instance-method">#</a>
+        <a class="method-permalink" href="#add%28value%3AInt32%29-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>Returns: CoverageResult enum values or tid</p>
-        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/core/coverage_calculator.cr#L112" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L12" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="initialize_coverage_array(coverage:Coverage,chrom_len:Int32)-instance-method">
+    <div class="entry-detail" id="clear-instance-method">
       <div class="signature">
         
-        def <strong>initialize_coverage_array</strong>(coverage : <a href="../../Depth/Core/Coverage.html">Coverage</a>, chrom_len : Int32)
+        def <strong>clear</strong>
 
-        <a class="method-permalink" href="#initialize_coverage_array%28coverage%3ACoverage%2Cchrom_len%3AInt32%29-instance-method">#</a>
+        <a class="method-permalink" href="#clear-instance-method">#</a>
       </div>
-      
-        <div class="doc">
-          
-          <p>Initialize coverage array for a chromosome</p>
-        </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ac2c3eba1ea9b3c402669b199d2edef0b5d0587/src/depth/core/coverage_calculator.cr#L51" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L30" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="counts:Array(Int32)-instance-method">
+      <div class="signature">
+        
+        def <strong>counts</strong> : Array(Int32)
+
+        <a class="method-permalink" href="#counts%3AArray%28Int32%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L4" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="median:Int32-instance-method">
+      <div class="signature">
+        
+        def <strong>median</strong> : Int32
+
+        <a class="method-permalink" href="#median%3AInt32-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L19" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="n:Int32-instance-method">
+      <div class="signature">
+        
+        def <strong>n</strong> : Int32
+
+        <a class="method-permalink" href="#n%3AInt32-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/3cbfb5503dafc242575c4740f700e5ea950f31c9/src/depth/stats/count_stat.cr#L5" target="_blank">View source</a>]
         
       </div>
     </div>
