@@ -13,8 +13,12 @@ module Depth::Core
     # Check if record should be filtered out
     private def should_skip_record?(rec) : Bool
       return true if rec.mapq < @options.mapq
-      return true if @options.min_frag_len >= 0 && rec.isize.abs < @options.min_frag_len
-      return true if rec.isize.abs > @options.max_frag_len
+      
+      if @options.fragment_mode
+        return true if @options.min_frag_len >= 0 && rec.isize.abs < @options.min_frag_len
+        return true if rec.isize.abs > @options.max_frag_len
+      end
+      
       return true if (rec.flag.value & @options.exclude_flag) != 0
       return true if @options.include_flag != 0 && (rec.flag.value & @options.include_flag) == 0
 
