@@ -253,7 +253,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L4" target="_blank">
         depth/io/output_manager.cr
       </a>
     
@@ -304,7 +304,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%29-instance-method" class="signature"><strong>#create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>)</a>
+        <a href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%2Chas_thresholds%3ABool%3Dfalse%29-instance-method" class="signature"><strong>#create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>, has_thresholds : Bool = <span class="n">false</span>)</a>
         
       </li>
     
@@ -339,6 +339,11 @@
       </li>
     
       <li class="entry-summary">
+        <a href="#f_thresholds%3AFile%3F-instance-method" class="signature"><strong>#f_thresholds</strong> : File?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
         <a href="#write_per_base_interval%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Cdepth%3AInt32%29-instance-method" class="signature"><strong>#write_per_base_interval</strong>(chrom : String, start : Int32, stop : Int32, depth : Int32)</a>
         
       </li>
@@ -355,6 +360,16 @@
     
       <li class="entry-summary">
         <a href="#write_summary_line%28region%3AString%2Cstat%3ADepth%3A%3AStats%3A%3ADepthStat%29-instance-method" class="signature"><strong>#write_summary_line</strong>(region : String, stat : Depth::Stats::DepthStat)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#write_threshold_counts%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Cname%3AString%7CNil%2Ccounts%3AArray%28Int32%29%29-instance-method" class="signature"><strong>#write_threshold_counts</strong>(chrom : String, start : Int32, stop : Int32, name : String | Nil, counts : Array(Int32))</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#write_thresholds_header%28thresholds%3AArray%28Int32%29%29-instance-method" class="signature"><strong>#write_thresholds_header</strong>(thresholds : Array(Int32))</a>
         
       </li>
     
@@ -413,7 +428,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L13" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L14" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -445,23 +460,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L65" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L83" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="create_files(no_per_base:Bool=false,has_regions:Bool=false,has_quantize:Bool=false)-instance-method">
+    <div class="entry-detail" id="create_files(no_per_base:Bool=false,has_regions:Bool=false,has_quantize:Bool=false,has_thresholds:Bool=false)-instance-method">
       <div class="signature">
         
-        def <strong>create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>)
+        def <strong>create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>, has_thresholds : Bool = <span class="n">false</span>)
 
-        <a class="method-permalink" href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%29-instance-method">#</a>
+        <a class="method-permalink" href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%2Chas_thresholds%3ABool%3Dfalse%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L26" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -477,7 +492,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -493,7 +508,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -509,7 +524,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -525,7 +540,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -541,7 +556,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -557,7 +572,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="f_thresholds:File?-instance-method">
+      <div class="signature">
+        
+        def <strong>f_thresholds</strong> : File?
+
+        <a class="method-permalink" href="#f_thresholds%3AFile%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -573,7 +604,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L46" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L49" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -589,7 +620,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L60" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L63" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -605,7 +636,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L51" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L54" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -621,7 +652,39 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/5ed8469305b16f83be41f778b14c838d7d57b61b/src/depth/io/output_manager.cr#L33" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L36" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="write_threshold_counts(chrom:String,start:Int32,stop:Int32,name:String|Nil,counts:Array(Int32))-instance-method">
+      <div class="signature">
+        
+        def <strong>write_threshold_counts</strong>(chrom : String, start : Int32, stop : Int32, name : String | Nil, counts : Array(Int32))
+
+        <a class="method-permalink" href="#write_threshold_counts%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Cname%3AString%7CNil%2Ccounts%3AArray%28Int32%29%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L75" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="write_thresholds_header(thresholds:Array(Int32))-instance-method">
+      <div class="signature">
+        
+        def <strong>write_thresholds_header</strong>(thresholds : Array(Int32))
+
+        <a class="method-permalink" href="#write_thresholds_header%28thresholds%3AArray%28Int32%29%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/1d077c7c148b615b7cff2f07efe8365e6fd50fae/src/depth/io/output_manager.cr#L68" target="_blank">View source</a>]
         
       </div>
     </div>
