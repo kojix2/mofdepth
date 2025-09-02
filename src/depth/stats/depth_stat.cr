@@ -37,12 +37,12 @@ module Depth::Stats
     end
 
     def +(other : DepthStat) : DepthStat
-      DepthStat.new.tap do |r|
-        r.n_bases = self.n_bases + other.n_bases
-        r.sum_depth = self.sum_depth + other.sum_depth
-        r.min_depth = {self.min_depth, other.min_depth}.min
-        r.max_depth = {self.max_depth, other.max_depth}.max
-      end
+      result = DepthStat.new
+      result.n_bases = self.n_bases + other.n_bases
+      result.sum_depth = self.sum_depth + other.sum_depth
+      result.min_depth = {self.min_depth, other.min_depth}.min
+      result.max_depth = {self.max_depth, other.max_depth}.max
+      result
     end
   end
 end
