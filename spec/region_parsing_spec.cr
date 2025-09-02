@@ -18,7 +18,7 @@ describe "Region Parsing" do
       region.should_not be_nil
       region = region.not_nil!
       region.chrom.should eq("Super-Scaffold_52")
-      region.start.should eq(1)  # 1-based to 0-based conversion
+      region.start.should eq(1) # 1-based to 0-based conversion
       region.stop.should eq(1000)
     end
 
@@ -27,7 +27,7 @@ describe "Region Parsing" do
       region.should_not be_nil
       region = region.not_nil!
       region.chrom.should eq("chr1")
-      region.start.should eq(99)  # 1-based to 0-based conversion
+      region.start.should eq(99) # 1-based to 0-based conversion
       region.stop.should eq(100)
     end
 
@@ -46,7 +46,7 @@ describe "Region Parsing" do
       region.should_not be_nil
       region = region.not_nil!
       region.chrom.should eq("chr22")
-      region.start.should eq(19999999)  # 1-based to 0-based conversion
+      region.start.should eq(19999999) # 1-based to 0-based conversion
       region.stop.should eq(23000000)
     end
 
@@ -55,7 +55,7 @@ describe "Region Parsing" do
       region.should_not be_nil
       region = region.not_nil!
       region.chrom.should eq("MT")
-      region.start.should eq(0)  # 1-based to 0-based conversion
+      region.start.should eq(0) # 1-based to 0-based conversion
       region.stop.should eq(16569)
     end
   end
