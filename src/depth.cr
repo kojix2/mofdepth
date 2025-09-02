@@ -25,6 +25,9 @@ module Depth
         psr.on("-m", "--use-median", "Use median for region stats instead of mean") { config.use_median = true }
         psr.on("-q", "--quantize QUANTIZE", "Write quantized output (e.g., 0:1:4:)") { |v| config.quantize = v }
         psr.on("-T", "--thresholds THRESHOLDS", "Comma-separated thresholds for region coverage") { |v| config.thresholds_str = v }
+        psr.on("-F", "--flag FLAG", "Exclude reads with FLAG bits set") { |v| config.exclude_flag = v.to_u16 }
+        psr.on("-i", "--include-flag FLAG", "Include only reads with FLAG bits set") { |v| config.include_flag = v.to_u16 }
+        psr.on("-R", "--read-groups GROUPS", "Comma-separated read group IDs") { |v| config.read_groups_str = v }
         psr.on("-v", "--version", "Show version") { puts Depth::VERSION; exit 0 }
         psr.on("-h", "--help", "Show this message") { puts psr; exit 0 }
 

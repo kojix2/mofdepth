@@ -19,6 +19,9 @@ module Depth
     property thresholds : Array(Int32) = [] of Int32
     property thresholds_str : String = ""
     property quantize : String = ""
+    property exclude_flag : UInt16 = 1796_u16
+    property include_flag : UInt16 = 0_u16
+    property read_groups_str : String = ""
 
     def validate!
       raise ArgumentError.new("BAM/CRAM path is required") if path.empty?
@@ -44,8 +47,11 @@ module Depth
         mapq: mapq,
         min_frag_len: min_frag_len,
         max_frag_len: (max_frag_len < 0 ? Int32::MAX : max_frag_len),
+        exclude_flag: exclude_flag,
+        include_flag: include_flag,
         fast_mode: fast_mode,
         fragment_mode: fragment_mode,
+        read_groups: parse_read_groups,
       )
     end
 
@@ -81,6 +87,11 @@ module Depth
     def threshold_values : Array(Int32)
       return [] of Int32 unless has_thresholds?
       Stats.threshold_args(thresholds_str)
+    end
+
+    private def parse_read_groups : Array(String)
+      return [] of String if read_groups_str.empty? || read_groups_str == "nil"
+      read_groups_str.split(',').map(&.strip)
     end
   end
 end
