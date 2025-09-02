@@ -1,5 +1,6 @@
 require "./core/types"
 require "./stats/quantize"
+require "./stats/threshold"
 
 module Depth
   class Configuration
@@ -16,6 +17,7 @@ module Depth
     property fragment_mode : Bool = false
     property use_median : Bool = false
     property thresholds : Array(Int32) = [] of Int32
+    property thresholds_str : String = ""
     property quantize : String = ""
 
     def validate!
@@ -30,6 +32,10 @@ module Depth
 
       if fast_mode && fragment_mode
         raise ArgumentError.new("--fast-mode and --fragment-mode cannot be used together")
+      end
+
+      if has_thresholds? && !has_regions?
+        raise ArgumentError.new("--thresholds can only be used when --by is specified")
       end
     end
 
@@ -66,6 +72,15 @@ module Depth
     def quantize_args : Array(Int32)
       return [] of Int32 unless has_quantize?
       Stats::Quantize.get_quantize_args(quantize)
+    end
+
+    def has_thresholds? : Bool
+      !thresholds_str.empty? && thresholds_str != "nil"
+    end
+
+    def threshold_values : Array(Int32)
+      return [] of Int32 unless has_thresholds?
+      Stats.threshold_args(thresholds_str)
     end
   end
 end

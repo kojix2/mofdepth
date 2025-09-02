@@ -24,6 +24,7 @@ module Depth
         psr.on("-a", "--fragment-mode", "Count full fragment (proper pairs only)") { config.fragment_mode = true }
         psr.on("-m", "--use-median", "Use median for region stats instead of mean") { config.use_median = true }
         psr.on("-q", "--quantize QUANTIZE", "Write quantized output (e.g., 0:1:4:)") { |v| config.quantize = v }
+        psr.on("-T", "--thresholds THRESHOLDS", "Comma-separated thresholds for region coverage") { |v| config.thresholds_str = v }
         psr.on("-v", "--version", "Show version") { puts Depth::VERSION; exit 0 }
         psr.on("-h", "--help", "Show this message") { puts psr; exit 0 }
 

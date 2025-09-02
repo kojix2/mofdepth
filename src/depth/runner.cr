@@ -33,7 +33,13 @@ module Depth
 
       # Create output manager
       output = FileIO::OutputManager.new(@config.prefix)
-      output.create_files(@config.no_per_base, @config.has_regions?, @config.has_quantize?)
+      output.create_files(@config.no_per_base, @config.has_regions?, @config.has_quantize?, @config.has_thresholds?)
+
+      # Write threshold header if needed
+      if @config.has_thresholds?
+        thresholds = @config.threshold_values
+        output.write_thresholds_header(thresholds)
+      end
 
       begin
         # Get reference sequences from header using hts.cr API
@@ -167,6 +173,13 @@ module Depth
           idx = [me.to_i, region_dist.size - 1].min
           region_dist[idx] += 1
         end
+
+        # Process thresholds for this window
+        if @config.has_thresholds?
+          thresholds = @config.threshold_values
+          counts = calculate_threshold_counts(coverage, start, stop, thresholds, tid)
+          output.write_threshold_counts(t.name, start, stop, nil, counts)
+        end
         start = stop
       end
     end
@@ -194,6 +207,13 @@ module Depth
         if tid != Core::CoverageResult::NoData.value && @config.window_size == 0
           self.class.bump_distribution!(region_dist, coverage, r.start, r.stop)
         end
+
+        # Process thresholds for this BED region
+        if @config.has_thresholds?
+          thresholds = @config.threshold_values
+          counts = calculate_threshold_counts(coverage, r.start, r.stop, thresholds, tid)
+          output.write_threshold_counts(t.name, r.start, r.stop, r.name, counts)
+        end
       end
     end
 
@@ -213,6 +233,26 @@ module Depth
           output.write_quantized_interval(t.name, start, stop, label)
         end
       end
+    end
+
+    private def calculate_threshold_counts(coverage : Core::Coverage, start : Int32, stop : Int32,
+                                           thresholds : Array(Int32), tid : Int32) : Array(Int32)
+      counts = Array(Int32).new(thresholds.size, 0)
+
+      if tid == Core::CoverageResult::NoData.value
+        # No data case - all counts are 0
+        return counts
+      end
+
+      # Count bases that meet each threshold
+      (start...Math.min(stop, coverage.size)).each do |i|
+        depth = coverage[i]
+        thresholds.each_with_index do |threshold, idx|
+          counts[idx] += 1 if depth >= threshold
+        end
+      end
+
+      counts
     end
   end
 end

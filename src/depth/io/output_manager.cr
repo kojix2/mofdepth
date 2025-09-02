@@ -8,6 +8,7 @@ module Depth::FileIO
     @f_perbase : File?
     @f_regions : File?
     @f_quantized : File?
+    @f_thresholds : File?
     @header_written = false
 
     def initialize(@prefix : String)
@@ -17,17 +18,19 @@ module Depth::FileIO
       @f_perbase = nil
       @f_regions = nil
       @f_quantized = nil
+      @f_thresholds = nil
     end
 
-    getter f_summary, f_global, f_region, f_perbase, f_regions, f_quantized
+    getter f_summary, f_global, f_region, f_perbase, f_regions, f_quantized, f_thresholds
 
-    def create_files(no_per_base : Bool = false, has_regions : Bool = false, has_quantize : Bool = false)
+    def create_files(no_per_base : Bool = false, has_regions : Bool = false, has_quantize : Bool = false, has_thresholds : Bool = false)
       @f_summary = File.open("#{@prefix}.depth.summary.txt", "w")
       @f_global = File.open("#{@prefix}.depth.global.dist.txt", "w")
       @f_region = has_regions ? File.open("#{@prefix}.depth.region.dist.txt", "w") : nil
       @f_perbase = no_per_base ? nil : File.open("#{@prefix}.per-base.bed", "w")
       @f_regions = has_regions ? File.open("#{@prefix}.regions.bed", "w") : nil
       @f_quantized = has_quantize ? File.open("#{@prefix}.quantized.bed", "w") : nil
+      @f_thresholds = has_thresholds ? File.open("#{@prefix}.thresholds.bed", "w") : nil
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)
@@ -62,8 +65,23 @@ module Depth::FileIO
       @f_quantized.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << label << "\n"
     end
 
+    def write_thresholds_header(thresholds : Array(Int32))
+      return unless @f_thresholds
+      @f_thresholds.not_nil! << "#chrom\tstart\tend\tregion"
+      thresholds.each { |t| @f_thresholds.not_nil! << "\t#{t}X" }
+      @f_thresholds.not_nil! << "\n"
+    end
+
+    def write_threshold_counts(chrom : String, start : Int32, stop : Int32, name : String?, counts : Array(Int32))
+      return unless @f_thresholds
+      @f_thresholds.not_nil! << chrom << "\t" << start << "\t" << stop << "\t"
+      @f_thresholds.not_nil! << (name || "unknown")
+      counts.each { |c| @f_thresholds.not_nil! << "\t" << c }
+      @f_thresholds.not_nil! << "\n"
+    end
+
     def close_all
-      [@f_summary, @f_global, @f_region, @f_perbase, @f_regions, @f_quantized].each(&.try(&.close))
+      [@f_summary, @f_global, @f_region, @f_perbase, @f_regions, @f_quantized, @f_thresholds].each(&.try(&.close))
     end
   end
 end

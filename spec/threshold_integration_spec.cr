@@ -1,0 +1,159 @@
+require "./spec_helper"
+require "../src/depth/config"
+require "../src/depth/io/output_manager"
+require "../src/depth/stats/threshold"
+
+describe "Threshold Integration" do
+  describe "Configuration integration" do
+    it "correctly identifies when thresholds are enabled" do
+      config = Depth::Configuration.new
+      config.thresholds_str = "1,2,3"
+      config.has_thresholds?.should be_true
+    end
+
+    it "correctly identifies when thresholds are disabled" do
+      config = Depth::Configuration.new
+      config.thresholds_str = ""
+      config.has_thresholds?.should be_false
+    end
+
+    it "returns correct threshold values" do
+      config = Depth::Configuration.new
+      config.thresholds_str = "1,5,10"
+      config.threshold_values.should eq([1, 5, 10])
+    end
+
+    it "validates threshold requires regions" do
+      config = Depth::Configuration.new
+      config.prefix = "test"
+      config.path = "test.bam"
+      config.thresholds_str = "1,2,3"
+      config.by = "" # No regions specified
+
+      expect_raises(ArgumentError, "--thresholds can only be used when --by is specified") do
+        config.validate!
+      end
+    end
+
+    it "validates successfully with thresholds and regions" do
+      config = Depth::Configuration.new
+      config.prefix = "test"
+      config.path = "test.bam"
+      config.thresholds_str = "1,2,3"
+      config.by = "100" # Window size specified
+
+      config.validate! # Should not raise
+    end
+  end
+
+  describe "OutputManager with thresholds" do
+    it "creates threshold output file when has_thresholds is true" do
+      prefix = "test_threshold"
+      output = Depth::FileIO::OutputManager.new(prefix)
+
+      begin
+        output.create_files(false, true, false, true)
+        output.f_thresholds.should_not be_nil
+        File.exists?("#{prefix}.thresholds.bed").should be_true
+      ensure
+        output.close_all
+        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
+        File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
+        File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
+        File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+      end
+    end
+
+    it "does not create threshold output file when has_thresholds is false" do
+      prefix = "test_no_threshold"
+      output = Depth::FileIO::OutputManager.new(prefix)
+
+      begin
+        output.create_files(false, true, false, false)
+        output.f_thresholds.should be_nil
+        File.exists?("#{prefix}.thresholds.bed").should be_false
+      ensure
+        output.close_all
+        File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
+        File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
+        File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
+        File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+      end
+    end
+
+    it "writes threshold header correctly" do
+      prefix = "test_header"
+      output = Depth::FileIO::OutputManager.new(prefix)
+
+      begin
+        output.create_files(false, true, false, true)
+        thresholds = [1, 5, 10]
+        output.write_thresholds_header(thresholds)
+        output.close_all
+
+        content = File.read("#{prefix}.thresholds.bed")
+        content.should eq("#chrom\tstart\tend\tregion\t1X\t5X\t10X\n")
+      ensure
+        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
+        File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
+        File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
+        File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+      end
+    end
+
+    it "writes threshold counts correctly" do
+      prefix = "test_counts"
+      output = Depth::FileIO::OutputManager.new(prefix)
+
+      begin
+        output.create_files(false, true, false, true)
+        thresholds = [1, 5, 10]
+        output.write_thresholds_header(thresholds)
+
+        counts = [100, 80, 20]
+        output.write_threshold_counts("chr1", 0, 100, "region1", counts)
+        output.write_threshold_counts("chr1", 100, 200, nil, [50, 30, 10])
+        output.close_all
+
+        content = File.read("#{prefix}.thresholds.bed")
+        lines = content.split('\n')
+        lines[0].should eq("#chrom\tstart\tend\tregion\t1X\t5X\t10X")
+        lines[1].should eq("chr1\t0\t100\tregion1\t100\t80\t20")
+        lines[2].should eq("chr1\t100\t200\tunknown\t50\t30\t10")
+      ensure
+        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
+        File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
+        File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
+        File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+      end
+    end
+  end
+
+  describe "Compatibility with original mosdepth" do
+    it "produces same threshold args as original mosdepth test cases" do
+      # Test case from mosdepth: threshold_args("1,2,3")
+      ts = Depth::Stats.threshold_args("1,2,3")
+      ts[0].should eq(1)
+      ts[1].should eq(2)
+      ts[2].should eq(3)
+      ts.size.should eq(3)
+    end
+
+    it "handles various threshold configurations like original mosdepth" do
+      # Empty case
+      ts = Depth::Stats.threshold_args("")
+      ts.should eq([] of Int32)
+
+      # Single value
+      ts = Depth::Stats.threshold_args("5")
+      ts.should eq([5])
+
+      # Multiple values with sorting
+      ts = Depth::Stats.threshold_args("10,1,5")
+      ts.should eq([1, 5, 10])
+    end
+  end
+end
