@@ -23,6 +23,7 @@ module Depth
         psr.on("-x", "--fast-mode", "Fast mode") { config.fast_mode = true }
         psr.on("-a", "--fragment-mode", "Count full fragment (proper pairs only)") { config.fragment_mode = true }
         psr.on("-m", "--use-median", "Use median for region stats instead of mean") { config.use_median = true }
+        psr.on("-q", "--quantize QUANTIZE", "Write quantized output (e.g., 0:1:4:)") { |v| config.quantize = v }
         psr.on("-v", "--version", "Show version") { puts Depth::VERSION; exit 0 }
         psr.on("-h", "--help", "Show this message") { puts psr; exit 0 }
 

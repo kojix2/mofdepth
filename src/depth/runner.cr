@@ -7,6 +7,7 @@ require "./io/output_manager"
 require "./stats/depth_stat"
 require "./stats/count_stat"
 require "./stats/distribution"
+require "./stats/quantize"
 
 module Depth
   class Runner
@@ -32,7 +33,7 @@ module Depth
 
       # Create output manager
       output = FileIO::OutputManager.new(@config.prefix)
-      output.create_files(@config.no_per_base, @config.has_regions?)
+      output.create_files(@config.no_per_base, @config.has_regions?, @config.has_quantize?)
 
       begin
         # Get reference sequences from header using hts.cr API
@@ -96,6 +97,11 @@ module Depth
                 output.write_per_base_interval(t.name, s, e, v)
               end
             end
+          end
+
+          # Write quantized intervals
+          if output.f_quantized && @config.has_quantize?
+            process_quantized(t, coverage, tid, output)
           end
 
           # Process regions (window or BED)
@@ -187,6 +193,24 @@ module Depth
         output.write_region_stat(t.name, r.start, r.stop, r.name, me)
         if tid != Core::CoverageResult::NoData.value && @config.window_size == 0
           self.class.bump_distribution!(region_dist, coverage, r.start, r.stop)
+        end
+      end
+    end
+
+    private def process_quantized(t : Core::Target, coverage : Core::Coverage, tid : Int32, output : FileIO::OutputManager)
+      quants = @config.quantize_args
+      return if quants.empty?
+
+      if tid == Core::CoverageResult::NoData.value
+        # Handle case with no data - write entire chromosome as first quantize bin if it includes 0
+        if quants[0] == 0
+          lookup = Stats::Quantize.make_lookup(quants)
+          output.write_quantized_interval(t.name, 0, t.length, lookup[0]) unless lookup.empty?
+        end
+      else
+        # Generate quantized segments using the quantize module
+        Stats::Quantize.gen_quantized(quants, coverage) do |start, stop, label|
+          output.write_quantized_interval(t.name, start, stop, label)
         end
       end
     end

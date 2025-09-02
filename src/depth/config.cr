@@ -1,4 +1,5 @@
 require "./core/types"
+require "./stats/quantize"
 
 module Depth
   class Configuration
@@ -15,6 +16,7 @@ module Depth
     property fragment_mode : Bool = false
     property use_median : Bool = false
     property thresholds : Array(Int32) = [] of Int32
+    property quantize : String = ""
 
     def validate!
       raise ArgumentError.new("BAM/CRAM path is required") if path.empty?
@@ -55,6 +57,15 @@ module Depth
       return nil unless has_regions?
       return nil if by.each_char.all?(&.ascii_number?)
       by
+    end
+
+    def has_quantize? : Bool
+      !quantize.empty? && quantize != "nil"
+    end
+
+    def quantize_args : Array(Int32)
+      return [] of Int32 unless has_quantize?
+      Stats::Quantize.get_quantize_args(quantize)
     end
   end
 end

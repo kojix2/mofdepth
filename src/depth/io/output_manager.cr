@@ -7,6 +7,7 @@ module Depth::FileIO
     @f_region : File?
     @f_perbase : File?
     @f_regions : File?
+    @f_quantized : File?
     @header_written = false
 
     def initialize(@prefix : String)
@@ -15,16 +16,18 @@ module Depth::FileIO
       @f_region = nil
       @f_perbase = nil
       @f_regions = nil
+      @f_quantized = nil
     end
 
-    getter f_summary, f_global, f_region, f_perbase, f_regions
+    getter f_summary, f_global, f_region, f_perbase, f_regions, f_quantized
 
-    def create_files(no_per_base : Bool = false, has_regions : Bool = false)
+    def create_files(no_per_base : Bool = false, has_regions : Bool = false, has_quantize : Bool = false)
       @f_summary = File.open("#{@prefix}.depth.summary.txt", "w")
       @f_global = File.open("#{@prefix}.depth.global.dist.txt", "w")
       @f_region = has_regions ? File.open("#{@prefix}.depth.region.dist.txt", "w") : nil
       @f_perbase = no_per_base ? nil : File.open("#{@prefix}.per-base.bed", "w")
       @f_regions = has_regions ? File.open("#{@prefix}.regions.bed", "w") : nil
+      @f_quantized = has_quantize ? File.open("#{@prefix}.quantized.bed", "w") : nil
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)
@@ -54,8 +57,13 @@ module Depth::FileIO
       end
     end
 
+    def write_quantized_interval(chrom : String, start : Int32, stop : Int32, label : String)
+      return unless @f_quantized
+      @f_quantized.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << label << "\n"
+    end
+
     def close_all
-      [@f_summary, @f_global, @f_region, @f_perbase, @f_regions].each(&.try(&.close))
+      [@f_summary, @f_global, @f_region, @f_perbase, @f_regions, @f_quantized].each(&.try(&.close))
     end
   end
 end
