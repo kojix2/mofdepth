@@ -3,14 +3,35 @@ require "../src/depth/config"
 require "../src/depth/io/output_manager"
 require "../src/depth/stats/quantize"
 
+# Helper module for test file cleanup
+module TestCleanup
+  def self.cleanup_test_files(prefix : String)
+    files_to_clean = [
+      "#{prefix}.quantized.bed",
+      "#{prefix}.per-base.bed",
+      "#{prefix}.depth.summary.txt",
+      "#{prefix}.depth.global.dist.txt",
+      "#{prefix}.depth.region.dist.txt",
+      "#{prefix}.regions.bed",
+      "#{prefix}.thresholds.bed",
+    ]
+
+    files_to_clean.each do |file|
+      File.delete(file) if File.exists?(file)
+    end
+  end
+end
+
 describe "Quantize Integration" do
+  after_each do
+    # Clean up any test files that might have been created
+    TestCleanup.cleanup_test_files("test_quantize")
+    TestCleanup.cleanup_test_files("test_no_quantize")
+  end
   describe "OutputManager with quantize" do
     it "creates quantized output file when has_quantize is true" do
       prefix = "test_quantize"
       output = Depth::FileIO::OutputManager.new(prefix)
-
-      # Clean up any existing files
-      File.delete("#{prefix}.quantized.bed") if File.exists?("#{prefix}.quantized.bed")
 
       output.create_files(no_per_base: false, has_regions: false, has_quantize: true)
 
@@ -28,11 +49,6 @@ describe "Quantize Integration" do
       content = File.read("#{prefix}.quantized.bed")
       content.should contain("chr1\t0\t100\t0:1")
       content.should contain("chr1\t100\t200\t1:4")
-
-      # Clean up
-      File.delete("#{prefix}.quantized.bed")
-      File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
-      File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
     end
 
     it "does not create quantized output file when has_quantize is false" do
@@ -48,10 +64,6 @@ describe "Quantize Integration" do
 
       # Verify file does not exist
       File.exists?("#{prefix}.quantized.bed").should be_false
-
-      # Clean up
-      File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
-      File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
     end
   end
 
