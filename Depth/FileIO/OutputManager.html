@@ -192,6 +192,11 @@
       
     </li>
   
+  <li class=" " data-id="mos/Depth/Stats/Quantize" data-name="depth::stats::quantize">
+      <a href="../../Depth/Stats/Quantize.html">Quantize</a>
+      
+    </li>
+  
 </ul>
 
       
@@ -248,7 +253,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L4" target="_blank">
         depth/io/output_manager.cr
       </a>
     
@@ -299,7 +304,7 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%29-instance-method" class="signature"><strong>#create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>)</a>
+        <a href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%29-instance-method" class="signature"><strong>#create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>)</a>
         
       </li>
     
@@ -310,6 +315,11 @@
     
       <li class="entry-summary">
         <a href="#f_perbase%3AFile%3F-instance-method" class="signature"><strong>#f_perbase</strong> : File?</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#f_quantized%3AFile%3F-instance-method" class="signature"><strong>#f_quantized</strong> : File?</a>
         
       </li>
     
@@ -330,6 +340,11 @@
     
       <li class="entry-summary">
         <a href="#write_per_base_interval%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Cdepth%3AInt32%29-instance-method" class="signature"><strong>#write_per_base_interval</strong>(chrom : String, start : Int32, stop : Int32, depth : Int32)</a>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#write_quantized_interval%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Clabel%3AString%29-instance-method" class="signature"><strong>#write_quantized_interval</strong>(chrom : String, start : Int32, stop : Int32, label : String)</a>
         
       </li>
     
@@ -398,7 +413,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L12" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L13" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -430,23 +445,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L57" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L65" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="create_files(no_per_base:Bool=false,has_regions:Bool=false)-instance-method">
+    <div class="entry-detail" id="create_files(no_per_base:Bool=false,has_regions:Bool=false,has_quantize:Bool=false)-instance-method">
       <div class="signature">
         
-        def <strong>create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>)
+        def <strong>create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>)
 
-        <a class="method-permalink" href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%29-instance-method">#</a>
+        <a class="method-permalink" href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%29-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -462,7 +477,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -478,7 +493,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="f_quantized:File?-instance-method">
+      <div class="signature">
+        
+        def <strong>f_quantized</strong> : File?
+
+        <a class="method-permalink" href="#f_quantized%3AFile%3F-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -494,7 +525,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -510,7 +541,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -526,7 +557,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L20" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L22" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -542,7 +573,23 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L43" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L46" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="write_quantized_interval(chrom:String,start:Int32,stop:Int32,label:String)-instance-method">
+      <div class="signature">
+        
+        def <strong>write_quantized_interval</strong>(chrom : String, start : Int32, stop : Int32, label : String)
+
+        <a class="method-permalink" href="#write_quantized_interval%28chrom%3AString%2Cstart%3AInt32%2Cstop%3AInt32%2Clabel%3AString%29-instance-method">#</a>
+      </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L60" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -558,7 +605,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L48" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L51" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -574,7 +621,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/30955eb2a9182ce784b3d1d94df2ed18165ebd5c/src/depth/io/output_manager.cr#L30" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/0a9ae814230025a892e66ff9af5f35d9c3f93834/src/depth/io/output_manager.cr#L33" target="_blank">View source</a>]
         
       </div>
     </div>
