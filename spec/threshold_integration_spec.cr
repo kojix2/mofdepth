@@ -62,6 +62,7 @@ describe "Threshold Integration" do
         File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
         File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
         File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+        File.delete("#{prefix}.per-base.bed") if File.exists?("#{prefix}.per-base.bed")
       end
     end
 
@@ -79,6 +80,7 @@ describe "Threshold Integration" do
         File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
         File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
         File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+        File.delete("#{prefix}.per-base.bed") if File.exists?("#{prefix}.per-base.bed")
       end
     end
 
@@ -100,6 +102,7 @@ describe "Threshold Integration" do
         File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
         File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
         File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+        File.delete("#{prefix}.per-base.bed") if File.exists?("#{prefix}.per-base.bed")
       end
     end
 
@@ -128,6 +131,7 @@ describe "Threshold Integration" do
         File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
         File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")
         File.delete("#{prefix}.regions.bed") if File.exists?("#{prefix}.regions.bed")
+        File.delete("#{prefix}.per-base.bed") if File.exists?("#{prefix}.per-base.bed")
       end
     end
   end
