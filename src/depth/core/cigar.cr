@@ -4,6 +4,16 @@ module Depth::Core
   module Cigar
     # CIGAR → start/end events on reference
     # Returns array of {pos, +1/-1}; pos is 0-based ref coordinate
+    #
+    # Key points (what contributes to depth):
+    # - Only operations that consume both reference and query contribute to depth: M, =, X
+    # - D, N consume reference only (gaps). They do not add to depth; we just advance the ref position (pos)
+    # - I, S consume query only. They do not advance reference and do not add to depth
+    #
+    # Implementation strategy:
+    # - Operations that don't consume reference are skipped entirely (next unless consumes_ref)
+    # - Only when an op consumes both reference and query (M/= /X) we emit start(+1)/end(-1) events
+    #   This ensures only M/= /X spans change coverage when later applied to the diff array
     def cigar_start_end_events(cigar, ipos : Int32) : Array(Tuple(Int32, Int32))
       events = [] of Tuple(Int32, Int32)
 
@@ -17,19 +27,27 @@ module Depth::Core
         # Check if operation consumes query: M, I, S, =, X
         consumes_query = ['M', 'I', 'S', '=', 'X'].includes?(op_char)
         if consumes_query
+          # We get here only for M/= /X (I/S don't consume reference and were filtered above).
+          # If the previous segment doesn't continue, start a new one;
+          # if a prior segment exists, emit its end event.
           if pos != last_stop
             events << {pos, 1}
             events << {last_stop, -1} if last_stop >= 0
           end
           last_stop = pos + olen.to_i32
         end
+        # For D/N (consume reference only), consumes_query is false:
+        # don't create events, only advance pos (treat as a gap)
         pos += olen.to_i32
       end
+      # Close the last open segment if any
       events << {last_stop, -1} if last_stop >= 0
       events
     end
 
     def inc_coverage(cigar, ipos : Int32, a : Coverage)
+      # Apply the start(+1)/end(-1) events to the diff array 'a'.
+      # A subsequent prefix_sum! turns it into actual per-base coverage.
       cigar_start_end_events(cigar, ipos).each do |pos, val|
         next if pos < 0 || a.empty?
         p = pos.clamp(0, a.size - 1)
