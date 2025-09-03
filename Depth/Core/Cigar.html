@@ -251,7 +251,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/tanudepth/blob/fea2f0ba916fa97dda0a42519341ccc85d2797de/src/depth/core/cigar.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/tanudepth/blob/399ef4b61ebf17622e1b347ce40b939e92ff6f1c/src/depth/core/cigar.cr#L4" target="_blank">
         depth/core/cigar.cr
       </a>
     
@@ -327,12 +327,24 @@
           
           <p>CIGAR → start/end events on reference
 Returns array of {pos, +1/-1}; pos is 0-based ref coordinate</p>
+<p>Key points (what contributes to depth):</p>
+<ul>
+<li>Only operations that consume both reference and query contribute to depth: M, =, X</li>
+<li>D, N consume reference only (gaps). They do not add to depth; we just advance the ref position (pos)</li>
+<li>I, S consume query only. They do not advance reference and do not add to depth</li>
+</ul>
+<p>Implementation strategy:</p>
+<ul>
+<li>Operations that don't consume reference are skipped entirely (next unless consumes_ref)</li>
+<li>Only when an op consumes both reference and query (M/= /X) we emit start(+1)/end(-1) events
+This ensures only M/= /X spans change coverage when later applied to the diff array</li>
+</ul>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/fea2f0ba916fa97dda0a42519341ccc85d2797de/src/depth/core/cigar.cr#L7" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/399ef4b61ebf17622e1b347ce40b939e92ff6f1c/src/depth/core/cigar.cr#L17" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -348,7 +360,7 @@ Returns array of {pos, +1/-1}; pos is 0-based ref coordinate</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/tanudepth/blob/fea2f0ba916fa97dda0a42519341ccc85d2797de/src/depth/core/cigar.cr#L32" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/tanudepth/blob/399ef4b61ebf17622e1b347ce40b939e92ff6f1c/src/depth/core/cigar.cr#L48" target="_blank">View source</a>]
         
       </div>
     </div>
