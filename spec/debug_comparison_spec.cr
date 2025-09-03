@@ -78,8 +78,8 @@ describe "Debug comparison with mosdepth" do
   end
 
   it "debugs basic coverage calculation" do
-  # Skip this diagnostic test if mosdepth binary is not available
-  next unless mosdepth_available_for_debug?(mosdepth_dir)
+    # Skip this diagnostic test if mosdepth binary is not available
+    next unless mosdepth_available_for_debug?(mosdepth_dir)
     puts "\n=== DEBUGGING BASIC COVERAGE CALCULATION ==="
 
     puts "\n--- Running mosdepth ---"
@@ -97,8 +97,8 @@ describe "Debug comparison with mosdepth" do
       end
     end
 
-  # Don't fail the test, just show the results
-  puts "\nmosdepth success: #{mosdepth_result.success?}"
-  puts "tanudepth success: #{tanudepth_result.success?}"
+    # Don't fail the test, just show the results
+    puts "\nmosdepth success: #{mosdepth_result.success?}"
+    puts "tanudepth success: #{tanudepth_result.success?}"
   end
 end
