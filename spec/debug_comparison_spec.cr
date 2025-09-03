@@ -15,7 +15,7 @@ def mosdepth_available_for_debug?(mosdepth_dir : String) : Bool
 end
 
 def run_mosdepth_debug(args : Array(String), prefix : String, temp_dir : String, mosdepth_dir : String, test_bam : String)
-  mosdepth_path = File.expand_path("#{mosdepth_dir}/mosdepth")
+  mosdepth_path = ENV.fetch("MOSDEPTH_PATH", File.expand_path("#{mosdepth_dir}/mosdepth"))
   test_bam_path = File.expand_path(test_bam)
   full_args = [prefix] + args + [test_bam_path]
 

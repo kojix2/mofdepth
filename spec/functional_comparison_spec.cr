@@ -156,7 +156,7 @@ describe "Functional comparison with mosdepth" do
 
     it "handles BED file regions" do
       next unless mosdepth_available?(mosdepth_dir)
-      bed_file = "#{mosdepth_dir}/tests/track.bed"
+      bed_file = File.expand_path("#{mosdepth_dir}/tests/track.bed")
       next unless File.exists?(bed_file)
 
       mosdepth_status = run_mosdepth(["-b", bed_file], "#{temp_dir}/mosdepth_bed", temp_dir, mosdepth_dir, test_bam)
@@ -201,24 +201,15 @@ describe "Functional comparison with mosdepth" do
   describe "fragment mode" do
     it "handles fragment mode processing" do
       next unless mosdepth_available?(mosdepth_dir)
-      fragment_bam = "#{mosdepth_dir}/tests/full-fragment-pairs.bam"
+      fragment_bam = File.expand_path("#{mosdepth_dir}/tests/full-fragment-pairs.bam")
       next unless File.exists?(fragment_bam)
 
-      mosdepth_cmd = Process.run("#{mosdepth_dir}/mosdepth",
-        ["-a", "#{temp_dir}/mosdepth_frag", fragment_bam],
-        chdir: temp_dir,
-        output: Process::Redirect::Close,
-        error: Process::Redirect::Close)
+      # Use shared helpers to ensure MOSDEPTH_PATH is respected and paths are absolute
+      mosdepth_status = run_mosdepth(["-a"], "#{temp_dir}/mosdepth_frag", temp_dir, mosdepth_dir, fragment_bam)
+      moffdepth_status = run_moffdepth(["-a"], "#{temp_dir}/moffdepth_frag", temp_dir, fragment_bam)
 
-      moffdepth_cmd = Process.run("crystal",
-        ["run", "src/depth.cr", "--", "-a", "#{temp_dir}/moffdepth_frag", fragment_bam],
-        chdir: Dir.current,
-        env: {"PWD" => temp_dir},
-        output: Process::Redirect::Close,
-        error: Process::Redirect::Close)
-
-      mosdepth_cmd.success?.should be_true
-      moffdepth_cmd.success?.should be_true
+      mosdepth_status.success?.should be_true
+      moffdepth_status.success?.should be_true
 
       File.exists?("#{temp_dir}/mosdepth_frag.per-base.bed.gz").should be_true
       File.exists?("#{temp_dir}/moffdepth_frag.per-base.bed.gz").should be_true

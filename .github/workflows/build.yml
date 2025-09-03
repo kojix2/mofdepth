@@ -9,6 +9,7 @@ on:
 jobs:
   build:
     name: build ${{ matrix.target }}
+    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
@@ -19,21 +20,20 @@ jobs:
             target: aarch64-apple-darwin
           - os: windows-latest
             target: x86_64-pc-windows-gnu
-    runs-on: ${{ matrix.os }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v5
         with:
           submodules: true
 
-      - name: Install Crystal
-        if: matrix.target != 'x86_64-pc-windows-gnu'
+      - name: Install Crystal (Linux/macOS)
+        if: matrix.os != 'windows-latest'
         uses: crystal-lang/install-crystal@v1
         with:
           crystal: latest
 
       - name: Install Crystal (MinGW64)
-        if: matrix.target == 'x86_64-pc-windows-gnu'
+        if: matrix.os == 'windows-latest'
         uses: msys2/setup-msys2@v2
         with:
           msystem: MINGW64
@@ -42,7 +42,15 @@ jobs:
             git
             mingw-w64-x86_64-crystal
             mingw-w64-x86_64-shards
-            mingw-w64-x86_64-htslib
+            mingw-w64-x86_64-xz
+            mingw-w64-x86_64-curl
+            mingw-w64-x86_64-libdeflate
+            mingw-w64-x86_64-pkgconf
+            mingw-w64-x86_64-openssl
+            mingw-w64-x86_64-libtre
+            mingw-w64-x86_64-libsystre
+            zip
+            file
 
       - name: Set version variables
         shell: bash
@@ -55,41 +63,33 @@ jobs:
           echo "VERSION=$VERSION" >> $GITHUB_ENV
           echo "BIN=depth" >> $GITHUB_ENV
 
-      - name: Install native dependencies (Linux)
-        if: matrix.os == 'ubuntu-latest'
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y libhts-dev
-
-      - name: Install native dependencies (macOS)
-        if: startsWith(matrix.os, 'macos')
-        run: |
-          brew update
-          brew install htslib
-
-      - name: Install dependencies
-        if: matrix.target != 'x86_64-pc-windows-gnu'
+      - name: Install dependencies (Linux/macOS)
+        if: matrix.os != 'windows-latest'
         run: shards install --without-development
 
       - name: Install dependencies (MinGW64)
-        if: matrix.target == 'x86_64-pc-windows-gnu'
+        if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: shards install --without-development
 
-      - name: Build on Linux
+      - name: Build on Linux (musl)
         if: matrix.target == 'x86_64-unknown-linux-musl'
         shell: bash
         run: |
           mkdir -p bin
           docker run -d --name alpine -v $(pwd):/workspace -w /workspace crystallang/crystal:latest-alpine tail -f /dev/null
-          docker exec alpine apk add --no-cache autoconf automake libtool build-base bzip2-dev bzip2-static
+          docker exec alpine apk add --no-cache \
+            autoconf automake libtool build-base pkgconf \
+            zlib-dev zlib-static \
+            bzip2-dev bzip2-static \
+            xz-dev xz-static
           docker exec alpine sh -c "
             git clone --depth 1 --branch develop https://github.com/samtools/htslib.git htslib &&
             cd htslib &&
             git submodule update --init --recursive &&
-            autoreconf -i && ./configure && make && make install
+            autoreconf -i && ./configure --disable-libcurl && make && make install
             "
-          docker exec alpine shards install --without-development --release --static
+          docker exec alpine shards install --without-development
           docker exec alpine shards build --release --static
           docker exec alpine chmod +x bin/$BIN
           ldd bin/$BIN || echo "Static binary (no dynamic dependencies)"
@@ -103,31 +103,33 @@ jobs:
           tar czf $PKG.tar.gz $PKG
 
       - name: Build on macOS
-        if: startsWith(matrix.target, 'x86_64-apple-darwin') || startsWith(matrix.target, 'aarch64-apple-darwin')
+        if: matrix.os == 'macos-latest'
         shell: bash
         run: |
-          shards install --without-development --release
           brew update
-          brew install libgc pcre2
-          git clone --depth 1 --branch develop https://github.com/samtools/htslib.git htslib && \
+          brew install pkg-config autoconf automake libtool bzip2 xz zlib
+          # Build local static htslib without libcurl (to avoid extra non-system deps)
+          git clone --depth 1 --branch develop https://github.com/samtools/htslib.git htslib
+          (
             cd htslib && \
             git submodule update --init --recursive && \
-            autoreconf -i && ./configure && make
-          echo "PKG_CONFIG_PATH=$PKG_CONFIG_PATH"
-          unset PKG_CONFIG_PATH
-          echo "cleared PKG_CONFIG_PATH to avoid openSSL conflicts"
-          ln -s $(brew ls libgc | grep libgc.a) .
-          ln -s $(brew ls pcre2 | grep libpcre2-8.a) .
-          ln -s htslib/libhts.a .
-          STATIC_LIBS="-L $(pwd) $(pwd)/libgc.a $(pwd)/libpcre2-8.a $(pwd)/libhts.a"
-          shards build --link-flags="$STATIC_LIBS" --release
+            autoreconf -i && \
+            ./configure --disable-libcurl --disable-shared --enable-static && \
+            make
+          )
+          # Ensure no dylib is available to accidentally link against
+          rm -f htslib/*.dylib htslib/libhts*.dylib || true
+          # Prefer the local static libhts.a
+          export LIBRARY_PATH="$(pwd)/htslib"
+          export CRYSTAL_LIBRARY_PATH="$(pwd)/htslib"
+          # Force load the static archive to satisfy symbols regardless of link order
+          shards build --release --link-flags="-Wl,-force_load,$(pwd)/htslib/libhts.a -lbz2 -llzma -lz -framework CoreFoundation -framework SystemConfiguration"
           chmod +x bin/$BIN
-          otool -L bin/$BIN
-          if otool -L bin/$BIN | grep homebrew; then
-            echo "Error: Homebrew dependencies detected!"
+          otool -L bin/$BIN | tee otool.txt
+          if grep -E -q "libhts.*dylib" otool.txt; then
+            echo "Error: dynamic libhts linked on macOS (should be static)" >&2
             exit 1
           fi
-          echo "Static linking successful"
           file bin/$BIN
           bin/$BIN --help
           PKG=depth-${VERSION}-${{ matrix.target }}
@@ -138,11 +140,28 @@ jobs:
           tar czf $PKG.tar.gz $PKG
 
       - name: Build on Windows (MinGW64)
-        if: matrix.target == 'x86_64-pc-windows-gnu'
+        if: matrix.os == 'windows-latest'
         shell: msys2 {0}
         run: |
-          shards install --without-development --release
-          shards build --release --static
+          pacman -S --noconfirm --needed autoconf automake libtool make git mingw-w64-x86_64-toolchain mingw-w64-x86_64-bzip2 mingw-w64-x86_64-xz mingw-w64-x86_64-zlib mingw-w64-x86_64-libdeflate
+          git clone --depth 1 --branch develop https://github.com/samtools/htslib.git htslib
+          cd htslib
+          git submodule update --init --recursive
+          autoreconf -i
+          ./configure --disable-libcurl --disable-shared --enable-static
+          make -j2
+          # ensure static archive exists
+          test -f libhts.a || { echo "libhts.a not found" >&2; ls -l; exit 1; }
+          # remove DLL/import libs to prefer static archive when resolving -lhts
+          rm -f *.dll *.dll.a *.lib || true
+          cd ..
+          # Link statically against libhts and compression libs; keep system ws2_32 dynamic
+          export LIBRARY_PATH="$(pwd)/htslib"
+          export CRYSTAL_LIBRARY_PATH="$(pwd)/htslib"
+          # Add local htslib to library search path and group static archives to avoid order issues
+          STATIC_LIBS="-L$(pwd)/htslib -Wl,--start-group -l:libhts.a -lbz2 -llzma -lz -ldeflate -lregex -ltre -Wl,--end-group -lws2_32"
+          echo "Using STATIC_LIBS=$STATIC_LIBS"
+          shards build --release --link-flags="$STATIC_LIBS"
           file bin/$BIN.exe
           bin/$BIN --help
           PKG=depth-${VERSION}-${{ matrix.target }}

@@ -116,7 +116,7 @@ describe "moffdepth validation tests" do
     end
 
     it "handles BED file regions" do
-      bed_file = "#{mosdepth_dir}/tests/track.bed"
+      bed_file = File.expand_path("#{mosdepth_dir}/tests/track.bed")
       next unless File.exists?(bed_file)
 
       status = run_moffdepth_validation(["-b", bed_file], "#{temp_dir}/bed_test", test_bam, temp_dir)
@@ -158,7 +158,7 @@ describe "moffdepth validation tests" do
     end
 
     it "handles fragment mode" do
-      fragment_bam = "#{mosdepth_dir}/tests/full-fragment-pairs.bam"
+      fragment_bam = File.expand_path("#{mosdepth_dir}/tests/full-fragment-pairs.bam")
       next unless File.exists?(fragment_bam)
 
       full_args = ["-a", "#{temp_dir}/frag_test", fragment_bam]
