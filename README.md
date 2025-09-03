@@ -1,7 +1,7 @@
-#　mofdepth　ﾓ　ﾌ
+#　moffdepth　ﾓ　ﾌ
 
-[![build](https://github.com/kojix2/mofdepth/actions/workflows/build.yml/badge.svg)](https://github.com/kojix2/mofdepth/actions/workflows/build.yml)
-[![Lines of Code](https://img.shields.io/endpoint?url=https%3A%2F%2Ftokei.kojix2.net%2Fbadge%2Fgithub%2Fkojix2%2Fmofdepth%2Flines)](https://tokei.kojix2.net/github/kojix2/mofdepth)
+[![build](https://github.com/kojix2/moffdepth/actions/workflows/build.yml/badge.svg)](https://github.com/kojix2/moffdepth/actions/workflows/build.yml)
+[![Lines of Code](https://img.shields.io/endpoint?url=https%3A%2F%2Ftokei.kojix2.net%2Fbadge%2Fgithub%2Fkojix2%2Fmoffdepth%2Flines)](https://tokei.kojix2.net/github/kojix2/moffdepth)
 ![Static Badge](https://img.shields.io/badge/PURE-VIBE_CODING-magenta)
 
 A fast BAM/CRAM depth calculation tool written in Crystal, inspired by [mosdepth](https://github.com/brentp/mosdepth).
@@ -27,8 +27,8 @@ A fast BAM/CRAM depth calculation tool written in Crystal, inspired by [mosdepth
 ### Build from source
 
 ```bash
-git clone https://github.com/kojix2/mofdepth
-cd mofdepth
+git clone https://github.com/kojix2/moffdepth
+cd moffdepth
 shards install
 crystal build src/depth.cr --release
 ```
