@@ -14,7 +14,7 @@ module Depth
     extend Core::CoverageUtils
     extend Stats::Distribution
 
-    def initialize(@config : Configuration)
+    def initialize(@config : Config)
     end
 
     def run
@@ -53,7 +53,7 @@ module Depth
                         selected = targets.select { |t| t.name == region.not_nil!.chrom }
                         # If a chromosome was specified but not found, fail (tests expect non-zero status)
                         if selected.empty?
-                          raise ConfigurationError.new("Chromosome not found: #{region.not_nil!.chrom}")
+                          raise ConfigError.new("Chromosome not found: #{region.not_nil!.chrom}")
                         end
                         selected
                       else

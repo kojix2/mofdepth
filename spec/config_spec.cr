@@ -1,10 +1,10 @@
 require "./spec_helper"
 require "../src/depth/config"
 
-describe Depth::Configuration do
+describe Depth::Config do
   describe "initialization" do
     it "initializes with default values" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix.should eq("")
       config.path.should eq("")
       config.threads.should eq(0)
@@ -24,7 +24,7 @@ describe Depth::Configuration do
 
   describe "#validate!" do
     it "raises error for empty path" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
 
       expect_raises(ArgumentError, "BAM/CRAM path is required") do
@@ -33,7 +33,7 @@ describe Depth::Configuration do
     end
 
     it "raises error for empty prefix" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.path = "test.bam"
 
       expect_raises(ArgumentError, "Output prefix is required") do
@@ -42,7 +42,7 @@ describe Depth::Configuration do
     end
 
     it "raises error for negative MAPQ" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.mapq = -1
@@ -53,7 +53,7 @@ describe Depth::Configuration do
     end
 
     it "raises error for negative threads" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.threads = -1
@@ -64,7 +64,7 @@ describe Depth::Configuration do
     end
 
     it "raises error when min_frag_len > max_frag_len" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.min_frag_len = 100
@@ -76,7 +76,7 @@ describe Depth::Configuration do
     end
 
     it "raises error when both fast_mode and fragment_mode are true" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.fast_mode = true
@@ -88,7 +88,7 @@ describe Depth::Configuration do
     end
 
     it "validates successfully with valid configuration" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.mapq = 10
@@ -102,12 +102,12 @@ describe Depth::Configuration do
 
   describe "#has_regions?" do
     it "returns false for empty by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.has_regions?.should eq(false)
     end
 
     it "returns true for non-empty by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.by = "1000"
       config.has_regions?.should eq(true)
     end
@@ -115,18 +115,18 @@ describe Depth::Configuration do
 
   describe "#window_size" do
     it "returns 0 for empty by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.window_size.should eq(0)
     end
 
     it "returns numeric value for numeric by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.by = "1000"
       config.window_size.should eq(1000)
     end
 
     it "returns 0 for non-numeric by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.by = "regions.bed"
       config.window_size.should eq(0)
     end
@@ -134,18 +134,18 @@ describe Depth::Configuration do
 
   describe "#bed_path" do
     it "returns nil for empty by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.bed_path.should be_nil
     end
 
     it "returns nil for numeric by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.by = "1000"
       config.bed_path.should be_nil
     end
 
     it "returns path for non-numeric by" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.by = "regions.bed"
       config.bed_path.should eq("regions.bed")
     end
@@ -153,18 +153,18 @@ describe Depth::Configuration do
 
   describe "#has_quantize?" do
     it "returns false for empty quantize" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.has_quantize?.should eq(false)
     end
 
     it "returns false for 'nil' quantize" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "nil"
       config.has_quantize?.should eq(false)
     end
 
     it "returns true for valid quantize string" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
       config.has_quantize?.should eq(true)
     end
@@ -172,18 +172,18 @@ describe Depth::Configuration do
 
   describe "#quantize_args" do
     it "returns empty array for no quantize" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize_args.should eq([] of Int32)
     end
 
     it "returns parsed quantize args" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
       config.quantize_args.should eq([0, 1, 4, Int32::MAX])
     end
 
     it "handles simple quantize string" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = ":10"
       config.quantize_args.should eq([0, 10])
     end
@@ -191,7 +191,7 @@ describe Depth::Configuration do
 
   describe "#to_options" do
     it "converts configuration to options correctly" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.mapq = 20
       config.min_frag_len = 100
       config.max_frag_len = 500
@@ -207,7 +207,7 @@ describe Depth::Configuration do
     end
 
     it "handles negative max_frag_len" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.max_frag_len = -1
 
       options = config.to_options
@@ -217,7 +217,7 @@ describe Depth::Configuration do
 
   describe "integration with quantize functionality" do
     it "integrates with quantize module correctly" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
 
       config.has_quantize?.should eq(true)

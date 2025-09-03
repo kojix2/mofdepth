@@ -3,7 +3,7 @@ require "./stats/quantize"
 require "./stats/threshold"
 
 module Depth
-  class Configuration
+  class Config
     property prefix : String = ""
     property path : String = ""
     property threads : Int32 = 0

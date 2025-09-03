@@ -7,7 +7,7 @@ require "./depth/errors"
 module Depth
   class CLI
     def self.run(args = ARGV)
-      config = Configuration.new
+      config = Config.new
       config.prefix = "out"
 
       OptionParser.parse(args) do |psr|
@@ -50,8 +50,8 @@ module Depth
       begin
         runner = Runner.new(config)
         runner.run
-      rescue ex : ConfigurationError
-        STDERR.puts "Configuration error: #{ex.message}"
+      rescue ex : ConfigError
+        STDERR.puts "Config error: #{ex.message}"
         exit 1
       rescue ex : FileNotFoundError
         STDERR.puts "File not found: #{ex.message}"

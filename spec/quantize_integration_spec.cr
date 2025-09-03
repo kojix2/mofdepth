@@ -67,9 +67,9 @@ describe "Quantize Integration" do
     end
   end
 
-  describe "Configuration integration" do
+  describe "Config integration" do
     it "correctly identifies when quantize is enabled" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
 
       config.has_quantize?.should be_true
@@ -77,7 +77,7 @@ describe "Quantize Integration" do
     end
 
     it "correctly identifies when quantize is disabled" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = ""
 
       config.has_quantize?.should be_false
@@ -88,7 +88,7 @@ describe "Quantize Integration" do
   describe "End-to-end quantize workflow" do
     it "processes quantize workflow correctly" do
       # Test the complete workflow from configuration to output
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
 
       # Get quantize args
@@ -117,7 +117,7 @@ describe "Quantize Integration" do
     end
 
     it "handles edge case with no data correctly" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:4:"
 
       quants = config.quantize_args
@@ -161,7 +161,7 @@ describe "Quantize Integration" do
       # Test cases from original mosdepth functional-tests.sh
 
       # Test case: -q 0:1:1000
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "0:1:1000"
       args = config.quantize_args
       args.should eq([0, 1, 1000])
@@ -172,7 +172,7 @@ describe "Quantize Integration" do
 
     it "handles single quantize value like original mosdepth" do
       # Test case: -q 60 (single threshold)
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.quantize = "60"
       args = config.quantize_args
       args.should eq([0, 60, Int32::MAX])

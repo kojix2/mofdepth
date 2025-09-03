@@ -7,7 +7,7 @@ module Depth
 
   class CoverageCalculationError < Error; end
 
-  class ConfigurationError < Error; end
+  class ConfigError < Error; end
 
   class BamIndexError < Error; end
 end

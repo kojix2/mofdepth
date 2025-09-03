@@ -4,27 +4,27 @@ require "../src/depth/io/output_manager"
 require "../src/depth/stats/threshold"
 
 describe "Threshold Integration" do
-  describe "Configuration integration" do
+  describe "Config integration" do
     it "correctly identifies when thresholds are enabled" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.thresholds_str = "1,2,3"
       config.has_thresholds?.should be_true
     end
 
     it "correctly identifies when thresholds are disabled" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.thresholds_str = ""
       config.has_thresholds?.should be_false
     end
 
     it "returns correct threshold values" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.thresholds_str = "1,5,10"
       config.threshold_values.should eq([1, 5, 10])
     end
 
     it "validates threshold requires regions" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.thresholds_str = "1,2,3"
@@ -36,7 +36,7 @@ describe "Threshold Integration" do
     end
 
     it "validates successfully with thresholds and regions" do
-      config = Depth::Configuration.new
+      config = Depth::Config.new
       config.prefix = "test"
       config.path = "test.bam"
       config.thresholds_str = "1,2,3"
