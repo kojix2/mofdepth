@@ -1,9 +1,10 @@
 require "hts"
 require "./types"
 require "./cigar"
+require "./coverage_utils"
 
 module Depth::Core
-  class CoverageBuilder
+  class CoverageCalculator
     extend Cigar
     extend CoverageUtils
 

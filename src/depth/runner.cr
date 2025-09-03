@@ -5,7 +5,7 @@ require "./core/cigar"
 require "./io/bed_reader"
 require "./io/output_manager"
 require "./stats/depth_stat"
-require "./stats/count_stat"
+require "./stats/int_histogram"
 require "./stats/distribution"
 require "./stats/quantize"
 
@@ -74,7 +74,7 @@ module Depth
         end
 
         # Create coverage calculator
-        calculator = Core::CoverageBuilder.new(bam, opts)
+        calculator = Core::CoverageCalculator.new(bam, opts)
 
         # Process each target
         sub_targets.each_with_index do |t, idx|
@@ -112,12 +112,12 @@ module Depth
 
           # Write quantized intervals
           if output.f_quantized && @config.has_quantize?
-            process_quantized(t, coverage, tid, output)
+            write_quantized_intervals(t, coverage, tid, output)
           end
 
           # Process regions (window or BED)
           if output.f_regions
-            process_regions(t, coverage, tid, window, bed_map, cs, output, region_dist)
+            write_region_stats(t, coverage, tid, window, bed_map, cs, output, region_dist)
           end
 
           # Process per-chromosome distributions and stats
@@ -145,10 +145,10 @@ module Depth
       end
     end
 
-    private def process_regions(t : Core::Target, coverage : Core::Coverage, tid : Int32,
-                                window : Int32, bed_map : Hash(String, Array(Core::Region))?,
-                                cs : Stats::IntHistogram, output : FileIO::OutputManager,
-                                region_dist : Array(Int64))
+    private def write_region_stats(t : Core::Target, coverage : Core::Coverage, tid : Int32,
+                                   window : Int32, bed_map : Hash(String, Array(Core::Region))?,
+                                   cs : Stats::IntHistogram, output : FileIO::OutputManager,
+                                   region_dist : Array(Int64))
       if window > 0
         process_window_regions(t, coverage, tid, window, cs, output, region_dist)
       else
@@ -184,7 +184,7 @@ module Depth
         # Process thresholds for this window
         if @config.has_thresholds?
           thresholds = @config.threshold_values
-          counts = calculate_threshold_counts(coverage, start, stop, thresholds, tid)
+          counts = count_threshold_bases(coverage, start, stop, thresholds, tid)
           output.write_threshold_counts(t.name, start, stop, nil, counts)
         end
         start = stop
@@ -218,13 +218,13 @@ module Depth
         # Process thresholds for this BED region
         if @config.has_thresholds?
           thresholds = @config.threshold_values
-          counts = calculate_threshold_counts(coverage, r.start, r.stop, thresholds, tid)
+          counts = count_threshold_bases(coverage, r.start, r.stop, thresholds, tid)
           output.write_threshold_counts(t.name, r.start, r.stop, r.name, counts)
         end
       end
     end
 
-    private def process_quantized(t : Core::Target, coverage : Core::Coverage, tid : Int32, output : FileIO::OutputManager)
+    private def write_quantized_intervals(t : Core::Target, coverage : Core::Coverage, tid : Int32, output : FileIO::OutputManager)
       quants = @config.quantize_args
       return if quants.empty?
 
@@ -242,8 +242,8 @@ module Depth
       end
     end
 
-    private def calculate_threshold_counts(coverage : Core::Coverage, start : Int32, stop : Int32,
-                                           thresholds : Array(Int32), tid : Int32) : Array(Int32)
+    private def count_threshold_bases(coverage : Core::Coverage, start : Int32, stop : Int32,
+                                      thresholds : Array(Int32), tid : Int32) : Array(Int32)
       counts = Array(Int32).new(thresholds.size, 0)
 
       if tid == Core::CoverageResult::NoData.value
