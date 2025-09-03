@@ -29,7 +29,7 @@ module Depth::Stats
         qs.sort!
         return qs
       rescue ex
-        STDERR.puts "[tanudepth] invalid quantize string: '#{qa}'"
+        STDERR.puts "[mofdepth] invalid quantize string: '#{qa}'"
         exit(2)
       end
     end

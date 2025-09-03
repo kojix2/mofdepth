@@ -2,7 +2,7 @@ require "./spec_helper"
 require "file_utils"
 require "process"
 
-def run_tanudepth_validation(args : Array(String), prefix : String, test_bam : String, temp_dir : String) : Process::Status
+def run_mofdepth_validation(args : Array(String), prefix : String, test_bam : String, temp_dir : String) : Process::Status
   full_args = args + [prefix, test_bam]
   Process.run("crystal", ["run", "src/depth.cr", "--"] + full_args,
     chdir: Dir.current,
@@ -11,9 +11,9 @@ def run_tanudepth_validation(args : Array(String), prefix : String, test_bam : S
     error: Process::Redirect::Close)
 end
 
-# Tests to validate tanudepth functionality even in environments where mosdepth doesn't work
-describe "Tanudepth validation tests" do
-  temp_dir = "/tmp/tanudepth_validation"
+# Tests to validate mofdepth functionality even in environments where mosdepth doesn't work
+describe "mofdepth validation tests" do
+  temp_dir = "/tmp/mofdepth_validation"
   mosdepth_dir = "./mosdepth"
   test_bam = "#{mosdepth_dir}/tests/ovl.bam"
 
@@ -27,7 +27,7 @@ describe "Tanudepth validation tests" do
 
   describe "basic functionality" do
     it "produces per-base coverage output" do
-      status = run_tanudepth_validation([] of String, "#{temp_dir}/test", test_bam, temp_dir)
+      status = run_mofdepth_validation([] of String, "#{temp_dir}/test", test_bam, temp_dir)
       status.success?.should be_true
 
       per_base_file = "#{temp_dir}/test.per-base.bed"
@@ -45,7 +45,7 @@ describe "Tanudepth validation tests" do
     end
 
     it "produces summary output" do
-      status = run_tanudepth_validation([] of String, "#{temp_dir}/summary_test", test_bam, temp_dir)
+      status = run_mofdepth_validation([] of String, "#{temp_dir}/summary_test", test_bam, temp_dir)
       status.success?.should be_true
 
       summary_file = "#{temp_dir}/summary_test.depth.summary.txt"
@@ -59,7 +59,7 @@ describe "Tanudepth validation tests" do
     end
 
     it "produces distribution output" do
-      status = run_tanudepth_validation([] of String, "#{temp_dir}/dist_test", test_bam, temp_dir)
+      status = run_mofdepth_validation([] of String, "#{temp_dir}/dist_test", test_bam, temp_dir)
       status.success?.should be_true
 
       dist_file = "#{temp_dir}/dist_test.depth.global.dist.txt"
@@ -70,14 +70,14 @@ describe "Tanudepth validation tests" do
 
   describe "flag filtering" do
     it "handles exclude flag filtering" do
-      status = run_tanudepth_validation(["-F", "4"], "#{temp_dir}/flag_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-F", "4"], "#{temp_dir}/flag_test", test_bam, temp_dir)
       status.success?.should be_true
 
       File.exists?("#{temp_dir}/flag_test.per-base.bed").should be_true
     end
 
     it "handles include flag filtering" do
-      status = run_tanudepth_validation(["-i", "2"], "#{temp_dir}/include_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-i", "2"], "#{temp_dir}/include_test", test_bam, temp_dir)
       status.success?.should be_true
 
       File.exists?("#{temp_dir}/include_test.per-base.bed").should be_true
@@ -86,7 +86,7 @@ describe "Tanudepth validation tests" do
 
   describe "quantization" do
     it "produces quantized output" do
-      status = run_tanudepth_validation(["-q", "0:1:1000"], "#{temp_dir}/quant_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-q", "0:1:1000"], "#{temp_dir}/quant_test", test_bam, temp_dir)
       status.success?.should be_true
 
       quant_file = "#{temp_dir}/quant_test.quantized.bed"
@@ -107,7 +107,7 @@ describe "Tanudepth validation tests" do
 
   describe "region processing" do
     it "handles window-based regions" do
-      status = run_tanudepth_validation(["-b", "100"], "#{temp_dir}/window_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-b", "100"], "#{temp_dir}/window_test", test_bam, temp_dir)
       status.success?.should be_true
 
       regions_file = "#{temp_dir}/window_test.regions.bed"
@@ -119,7 +119,7 @@ describe "Tanudepth validation tests" do
       bed_file = "#{mosdepth_dir}/tests/track.bed"
       next unless File.exists?(bed_file)
 
-      status = run_tanudepth_validation(["-b", bed_file], "#{temp_dir}/bed_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-b", bed_file], "#{temp_dir}/bed_test", test_bam, temp_dir)
       status.success?.should be_true
 
       regions_file = "#{temp_dir}/bed_test.regions.bed"
@@ -129,7 +129,7 @@ describe "Tanudepth validation tests" do
 
   describe "threshold processing" do
     it "handles threshold calculations" do
-      status = run_tanudepth_validation(["-T", "0,1,2", "-b", "100"], "#{temp_dir}/thresh_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-T", "0,1,2", "-b", "100"], "#{temp_dir}/thresh_test", test_bam, temp_dir)
       status.success?.should be_true
 
       thresh_file = "#{temp_dir}/thresh_test.thresholds.bed"
@@ -151,7 +151,7 @@ describe "Tanudepth validation tests" do
 
   describe "advanced modes" do
     it "handles fast mode" do
-      status = run_tanudepth_validation(["-x"], "#{temp_dir}/fast_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-x"], "#{temp_dir}/fast_test", test_bam, temp_dir)
       status.success?.should be_true
 
       File.exists?("#{temp_dir}/fast_test.per-base.bed").should be_true
@@ -175,13 +175,13 @@ describe "Tanudepth validation tests" do
 
   describe "error handling" do
     it "handles missing chromosome gracefully" do
-      status = run_tanudepth_validation(["-c", "nonexistent"], "#{temp_dir}/missing_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["-c", "nonexistent"], "#{temp_dir}/missing_test", test_bam, temp_dir)
       # Should fail gracefully
       status.success?.should be_false
     end
 
     it "handles invalid arguments" do
-      status = run_tanudepth_validation(["--invalid-option"], "#{temp_dir}/invalid_test", test_bam, temp_dir)
+      status = run_mofdepth_validation(["--invalid-option"], "#{temp_dir}/invalid_test", test_bam, temp_dir)
       # Should fail gracefully
       status.success?.should be_false
     end
@@ -189,7 +189,7 @@ describe "Tanudepth validation tests" do
 
   describe "output format validation" do
     it "produces mosdepth-compatible file names" do
-      status = run_tanudepth_validation([] of String, "#{temp_dir}/format_test", test_bam, temp_dir)
+      status = run_mofdepth_validation([] of String, "#{temp_dir}/format_test", test_bam, temp_dir)
       status.success?.should be_true
 
       # Check expected file names match mosdepth format
@@ -199,7 +199,7 @@ describe "Tanudepth validation tests" do
     end
 
     it "produces valid BED format output" do
-      status = run_tanudepth_validation([] of String, "#{temp_dir}/bed_format_test", test_bam, temp_dir)
+      status = run_mofdepth_validation([] of String, "#{temp_dir}/bed_format_test", test_bam, temp_dir)
       status.success?.should be_true
 
       per_base_file = "#{temp_dir}/bed_format_test.per-base.bed"

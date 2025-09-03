@@ -40,10 +40,10 @@ def run_mosdepth_debug(args : Array(String), prefix : String, temp_dir : String,
   result
 end
 
-def run_tanudepth_debug(args : Array(String), prefix : String, temp_dir : String, test_bam : String)
+def run_mofdepth_debug(args : Array(String), prefix : String, temp_dir : String, test_bam : String)
   full_args = args + [prefix, test_bam]
 
-  puts "Running tanudepth: crystal run src/depth.cr -- #{full_args.join(" ")}"
+  puts "Running mofdepth: crystal run src/depth.cr -- #{full_args.join(" ")}"
   puts "Working directory: #{Dir.current}"
   puts "Output directory: #{temp_dir}"
 
@@ -65,7 +65,7 @@ def run_tanudepth_debug(args : Array(String), prefix : String, temp_dir : String
 end
 
 describe "Debug comparison with mosdepth" do
-  temp_dir = "/tmp/tanudepth_debug"
+  temp_dir = "/tmp/mofdepth_debug"
   mosdepth_dir = "./mosdepth"
   test_bam = "#{mosdepth_dir}/tests/ovl.bam"
 
@@ -85,8 +85,8 @@ describe "Debug comparison with mosdepth" do
     puts "\n--- Running mosdepth ---"
     mosdepth_result = run_mosdepth_debug([] of String, "#{temp_dir}/mosdepth_test", temp_dir, mosdepth_dir, test_bam)
 
-    puts "\n--- Running tanudepth ---"
-    tanudepth_result = run_tanudepth_debug([] of String, "#{temp_dir}/tanudepth_test", temp_dir, test_bam)
+    puts "\n--- Running mofdepth ---"
+    mofdepth_result = run_mofdepth_debug([] of String, "#{temp_dir}/mofdepth_test", temp_dir, test_bam)
 
     puts "\n--- File listing after execution ---"
     if Dir.exists?(temp_dir)
@@ -99,6 +99,6 @@ describe "Debug comparison with mosdepth" do
 
     # Don't fail the test, just show the results
     puts "\nmosdepth success: #{mosdepth_result.success?}"
-    puts "tanudepth success: #{tanudepth_result.success?}"
+    puts "mofdepth success: #{mofdepth_result.success?}"
   end
 end
