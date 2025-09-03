@@ -1,4 +1,4 @@
-# mofdepth
+#　mofdepth　ﾓ　ﾌ
 
 [![build](https://github.com/kojix2/mofdepth/actions/workflows/build.yml/badge.svg)](https://github.com/kojix2/mofdepth/actions/workflows/build.yml)
 [![Lines of Code](https://img.shields.io/endpoint?url=https%3A%2F%2Ftokei.kojix2.net%2Fbadge%2Fgithub%2Fkojix2%2Fmofdepth%2Flines)](https://tokei.kojix2.net/github/kojix2/mofdepth)
