@@ -4,12 +4,15 @@ module Depth::Stats
     property sum_depth : Int64 = 0_i64
     property min_depth : Int32 = Int32::MAX
     property max_depth : Int32 = 0
+    # number of bases with coverage > 0 (mosdepth "bases")
+    property bases : Int32 = 0
 
     def clear
       @n_bases = 0
       @sum_depth = 0
       @min_depth = Int32::MAX
       @max_depth = 0
+      @bases = 0
     end
 
     def self.from_slice(slice : Slice(Int32))
@@ -19,6 +22,7 @@ module Depth::Stats
         s.sum_depth += v
         s.min_depth = v if v < s.min_depth
         s.max_depth = v if v > s.max_depth
+        s.bases += 1 if v > 0
       end
       s
     end
@@ -32,6 +36,7 @@ module Depth::Stats
         s.sum_depth += v
         s.min_depth = v if v < s.min_depth
         s.max_depth = v if v > s.max_depth
+        s.bases += 1 if v > 0
       end
       s
     end
@@ -42,6 +47,7 @@ module Depth::Stats
       result.sum_depth = self.sum_depth + other.sum_depth
       result.min_depth = {self.min_depth, other.min_depth}.min
       result.max_depth = {self.max_depth, other.max_depth}.max
+      result.bases = self.bases + other.bases
       result
     end
   end
