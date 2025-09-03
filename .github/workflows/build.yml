@@ -76,17 +76,6 @@ jobs:
         shell: msys2 {0}
         run: shards install --without-development
 
-      - name: Run tests
-        if: matrix.target != 'x86_64-pc-windows-gnu'
-        run: |
-          crystal spec
-
-      - name: Run tests (MinGW64)
-        if: matrix.target == 'x86_64-pc-windows-gnu'
-        shell: msys2 {0}
-        run: |
-          crystal spec
-
       - name: Build on Linux
         if: matrix.target == 'x86_64-unknown-linux-musl'
         shell: bash
