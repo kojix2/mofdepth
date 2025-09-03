@@ -38,7 +38,8 @@ jobs:
           CHOOSENIM_NO_ANALYTICS: 1
         run: |
           curl -sSf https://nim-lang.org/choosenim/init.sh | bash -s -- -y
-          echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+          echo "/home/runner/.nimble/bin" >> $GITHUB_PATH
+          export PATH="/home/runner/.nimble/bin:$PATH"
           nim --version
           nimble --version
 
