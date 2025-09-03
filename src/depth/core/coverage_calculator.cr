@@ -23,7 +23,7 @@ module Depth::Core
       return true if (rec.flag.value & @options.exclude_flag) != 0
       return true if @options.include_flag != 0 && (rec.flag.value & @options.include_flag) == 0
 
-      if @options.read_groups.any?
+      unless @options.read_groups.empty?
         rg = rec.aux("RG")
         return true unless rg.is_a?(String) && @options.read_groups.includes?(rg)
       end
