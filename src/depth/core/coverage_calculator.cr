@@ -5,8 +5,7 @@ require "./coverage_utils"
 
 module Depth::Core
   class CoverageCalculator
-    extend Cigar
-    extend CoverageUtils
+    include Cigar
 
     def initialize(@bam : HTS::Bam, @options : Options)
     end
@@ -48,7 +47,8 @@ module Depth::Core
         coverage[frag_start] += 1
         coverage[end_pos] -= 1
       else
-        self.class.inc_coverage(rec.cigar, rec.pos.to_i32, coverage)
+        # use instance method from Cigar
+        inc_coverage(rec.cigar, rec.pos.to_i32, coverage)
       end
     end
 
