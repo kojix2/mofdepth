@@ -1,0 +1,87 @@
+name: test
+
+on:
+  push:
+    branches: ["*"]
+  pull_request:
+
+jobs:
+  ubuntu-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository (with submodules)
+        uses: actions/checkout@v5
+        with:
+          submodules: true
+
+      - name: Install Crystal
+        uses: crystal-lang/install-crystal@v1
+        with:
+          crystal: latest
+
+      - name: Install native dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y \
+            libhts-dev \
+            build-essential autoconf automake libtool \
+            libbz2-dev liblzma-dev zlib1g-dev libdeflate-dev \
+            libcurl4-openssl-dev pkg-config curl git
+
+      - name: Install Nim (choosenim)
+        env:
+          CHOOSENIM_NO_ANALYTICS: 1
+        run: |
+          curl -sSf https://nim-lang.org/choosenim/init.sh | bash -s -- -y
+          echo "$HOME/.nimble/bin" >> $GITHUB_PATH
+          nim --version
+          nimble --version
+
+      - name: Cache Nimble packages
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.nimble
+          key: ${{ runner.os }}-nimble-${{ hashFiles('mosdepth/mosdepth.nimble') }}
+          restore-keys: |
+            ${{ runner.os }}-nimble-
+
+      - name: Set up Rust toolchain
+        uses: dtolnay/rust-toolchain@stable
+
+      - name: Build and install d4-format (Rust binding)
+        run: |
+          git clone --depth 1 https://github.com/38/d4-format
+          cd d4-format
+          cargo build --release
+          sudo cp target/release/libd4binding.* /usr/local/lib || true
+          sudo cp d4binding/include/d4.h /usr/local/include/ || true
+          sudo ldconfig
+
+      - name: Build mosdepth from submodule
+        working-directory: mosdepth
+        run: |
+          nimble install -y
+          nim c -d:release mosdepth.nim
+          ls -l mosdepth || true
+          echo "MOSDEPTH_PATH=$PWD/mosdepth" >> $GITHUB_ENV
+
+      - name: Install shards (project deps)
+        run: shards install
+
+      - name: Cache shards
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.cache/shards
+            lib
+          key: ${{ runner.os }}-shards-${{ hashFiles('shard.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-shards-
+
+      - name: Run specs (using built mosdepth)
+        env:
+          MOSDEPTH_PATH: ${{ env.MOSDEPTH_PATH }}
+        run: |
+          echo "Using MOSDEPTH_PATH=$MOSDEPTH_PATH"
+          crystal spec -Dpreview_mt
