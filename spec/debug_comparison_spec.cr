@@ -2,6 +2,18 @@ require "./spec_helper"
 require "file_utils"
 require "process"
 
+def mosdepth_available_for_debug?(mosdepth_dir : String) : Bool
+  mosdepth_path = ENV.fetch("MOSDEPTH_PATH", File.expand_path("#{mosdepth_dir}/mosdepth"))
+  begin
+    status = Process.run(mosdepth_path, ["-h"],
+      output: Process::Redirect::Close,
+      error: Process::Redirect::Close)
+    status.success?
+  rescue
+    false
+  end
+end
+
 def run_mosdepth_debug(args : Array(String), prefix : String, temp_dir : String, mosdepth_dir : String, test_bam : String)
   mosdepth_path = File.expand_path("#{mosdepth_dir}/mosdepth")
   test_bam_path = File.expand_path(test_bam)
@@ -66,6 +78,8 @@ describe "Debug comparison with mosdepth" do
   end
 
   it "debugs basic coverage calculation" do
+  # Skip this diagnostic test if mosdepth binary is not available
+  next unless mosdepth_available_for_debug?(mosdepth_dir)
     puts "\n=== DEBUGGING BASIC COVERAGE CALCULATION ==="
 
     puts "\n--- Running mosdepth ---"
@@ -83,8 +97,8 @@ describe "Debug comparison with mosdepth" do
       end
     end
 
-    # Don't fail the test, just show the results
-    puts "\nmosdepth success: #{mosdepth_result.success?}"
-    puts "tanudepth success: #{tanudepth_result.success?}"
+  # Don't fail the test, just show the results
+  puts "\nmosdepth success: #{mosdepth_result.success?}"
+  puts "tanudepth success: #{tanudepth_result.success?}"
   end
 end
