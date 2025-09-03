@@ -165,7 +165,7 @@ describe Depth::Stats::Quantize do
         segments << segment
       end
 
-      segments.each do |start, stop, label|
+      segments.each do |_start, _stop, label|
         label.should match(/\d+:(inf|\d+)/)
       end
     end

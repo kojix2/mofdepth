@@ -9,13 +9,13 @@ module Depth
     property threads : Int32 = 0
     property chrom : String = ""
     property by : String = "" # numeric window or BED path
-    property no_per_base : Bool = false
+    property? no_per_base : Bool = false
     property mapq : Int32 = 0
     property min_frag_len : Int32 = -1
     property max_frag_len : Int32 = -1
-    property fast_mode : Bool = false
-    property fragment_mode : Bool = false
-    property use_median : Bool = false
+    property? fast_mode : Bool = false
+    property? fragment_mode : Bool = false
+    property? use_median : Bool = false
     property thresholds : Array(Int32) = [] of Int32
     property thresholds_str : String = ""
     property quantize : String = ""
@@ -33,7 +33,7 @@ module Depth
         raise ArgumentError.new("min_frag_len cannot be greater than max_frag_len")
       end
 
-      if fast_mode && fragment_mode
+      if fast_mode? && fragment_mode?
         raise ArgumentError.new("--fast-mode and --fragment-mode cannot be used together")
       end
 
@@ -49,8 +49,8 @@ module Depth
         max_frag_len: (max_frag_len < 0 ? Int32::MAX : max_frag_len),
         exclude_flag: exclude_flag,
         include_flag: include_flag,
-        fast_mode: fast_mode,
-        fragment_mode: fragment_mode,
+        fast_mode: fast_mode?,
+        fragment_mode: fragment_mode?,
         read_groups: parse_read_groups,
       )
     end

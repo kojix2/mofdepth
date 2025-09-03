@@ -35,7 +35,7 @@ module Depth
 
       # Create output manager
       output = FileIO::OutputManager.new(@config.prefix)
-      output.create_files(@config.no_per_base, @config.has_regions?, @config.has_quantize?, @config.has_thresholds?)
+      output.create_files(@config.no_per_base?, @config.has_regions?, @config.has_quantize?, @config.has_thresholds?)
 
       # Write threshold header if needed
       if @config.has_thresholds?
@@ -66,7 +66,7 @@ module Depth
         global_dist = Array(Int64).new(512, 0_i64)
         region_dist = Array(Int64).new(512, 0_i64)
         global_stat = Stats::DepthStat.new
-        cs = Stats::IntHistogram.new(@config.use_median ? 65_536 : 0)
+        cs = Stats::IntHistogram.new(@config.use_median? ? 65_536 : 0)
 
         # Handle window/BED regions
         bed_map : Hash(String, Array(Core::Region))? = nil
@@ -79,9 +79,9 @@ module Depth
         calculator = Core::CoverageCalculator.new(bam, opts)
 
         # Process each target
-        sub_targets.each_with_index do |t, idx|
+        sub_targets.each do |t|
           # Skip if no regions for this chrom and we won't write per-base
-          if @config.no_per_base && bed_map && !bed_map.not_nil!.has_key?(t.name)
+          if @config.no_per_base? && bed_map && !bed_map.not_nil!.has_key?(t.name)
             next
           end
 
@@ -166,7 +166,7 @@ module Depth
         stop = Math.min(start + window, t.length)
         me = 0.0
         if tid != Core::CoverageResult::NoData.value
-          if @config.use_median
+          if @config.use_median?
             cs.clear
             (start...stop).each { |i| cs.add(coverage[i]) }
             me = cs.median.to_f
@@ -201,7 +201,7 @@ module Depth
       regs.each do |r|
         me = 0.0
         if tid != Core::CoverageResult::NoData.value
-          if @config.use_median
+          if @config.use_median?
             cs.clear
             (r.start...Math.min(r.stop, coverage.size)).each { |i| cs.add(coverage[i]) }
             me = cs.median.to_f

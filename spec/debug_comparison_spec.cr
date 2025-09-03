@@ -33,8 +33,8 @@ def run_mosdepth_debug(args : Array(String), prefix : String, temp_dir : String,
     error: stderr)
 
   puts "Exit code: #{result.exit_code}"
-  puts "STDOUT: #{stdout.to_s}"
-  puts "STDERR: #{stderr.to_s}"
+  puts "STDOUT: #{stdout}"
+  puts "STDERR: #{stderr}"
   puts "---"
 
   result
@@ -57,8 +57,8 @@ def run_mofdepth_debug(args : Array(String), prefix : String, temp_dir : String,
     error: stderr)
 
   puts "Exit code: #{result.exit_code}"
-  puts "STDOUT: #{stdout.to_s}"
-  puts "STDERR: #{stderr.to_s}"
+  puts "STDOUT: #{stdout}"
+  puts "STDERR: #{stderr}"
   puts "---"
 
   result
