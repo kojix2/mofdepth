@@ -253,7 +253,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L4" target="_blank">
+      <a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L5" target="_blank">
         depth/io/output_manager.cr
       </a>
     
@@ -276,7 +276,7 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#new%28prefix%3AString%29-class-method" class="signature"><strong>.new</strong>(prefix : String)</a>
+        <a href="#new%28config%3AConfig%29-class-method" class="signature"><strong>.new</strong>(config : Config)</a>
         
       </li>
     
@@ -304,42 +304,37 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%2Chas_thresholds%3ABool%3Dfalse%29-instance-method" class="signature"><strong>#create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>, has_thresholds : Bool = <span class="n">false</span>)</a>
+        <a href="#f_global%3AFile%7CNil-instance-method" class="signature"><strong>#f_global</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_global%3AFile%3F-instance-method" class="signature"><strong>#f_global</strong> : File?</a>
+        <a href="#f_perbase%3AFile%7CNil-instance-method" class="signature"><strong>#f_perbase</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_perbase%3AFile%3F-instance-method" class="signature"><strong>#f_perbase</strong> : File?</a>
+        <a href="#f_quantized%3AFile%7CNil-instance-method" class="signature"><strong>#f_quantized</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_quantized%3AFile%3F-instance-method" class="signature"><strong>#f_quantized</strong> : File?</a>
+        <a href="#f_region%3AFile%7CNil-instance-method" class="signature"><strong>#f_region</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_region%3AFile%3F-instance-method" class="signature"><strong>#f_region</strong> : File?</a>
+        <a href="#f_regions%3AFile%7CNil-instance-method" class="signature"><strong>#f_regions</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_regions%3AFile%3F-instance-method" class="signature"><strong>#f_regions</strong> : File?</a>
+        <a href="#f_summary%3AFile%7CNil-instance-method" class="signature"><strong>#f_summary</strong> : File | Nil</a>
         
       </li>
     
       <li class="entry-summary">
-        <a href="#f_summary%3AFile%3F-instance-method" class="signature"><strong>#f_summary</strong> : File?</a>
-        
-      </li>
-    
-      <li class="entry-summary">
-        <a href="#f_thresholds%3AFile%3F-instance-method" class="signature"><strong>#f_thresholds</strong> : File?</a>
+        <a href="#f_thresholds%3AFile%7CNil-instance-method" class="signature"><strong>#f_thresholds</strong> : File | Nil</a>
         
       </li>
     
@@ -417,18 +412,18 @@
     Constructor Detail
   </h2>
   
-    <div class="entry-detail" id="new(prefix:String)-class-method">
+    <div class="entry-detail" id="new(config:Config)-class-method">
       <div class="signature">
         
-        def self.<strong>new</strong>(prefix : String)
+        def self.<strong>new</strong>(config : <a href="../../Depth/Config.html">Config</a>)
 
-        <a class="method-permalink" href="#new%28prefix%3AString%29-class-method">#</a>
+        <a class="method-permalink" href="#new%28config%3AConfig%29-class-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L14" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L16" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -460,135 +455,119 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L84" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L76" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="create_files(no_per_base:Bool=false,has_regions:Bool=false,has_quantize:Bool=false,has_thresholds:Bool=false)-instance-method">
+    <div class="entry-detail" id="f_global:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>create_files</strong>(no_per_base : Bool = <span class="n">false</span>, has_regions : Bool = <span class="n">false</span>, has_quantize : Bool = <span class="n">false</span>, has_thresholds : Bool = <span class="n">false</span>)
+        def <strong>f_global</strong> : File | Nil
 
-        <a class="method-permalink" href="#create_files%28no_per_base%3ABool%3Dfalse%2Chas_regions%3ABool%3Dfalse%2Chas_quantize%3ABool%3Dfalse%2Chas_thresholds%3ABool%3Dfalse%29-instance-method">#</a>
+        <a class="method-permalink" href="#f_global%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L26" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L7" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_global:File?-instance-method">
+    <div class="entry-detail" id="f_perbase:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_global</strong> : File?
+        def <strong>f_perbase</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_global%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_perbase%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L9" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_perbase:File?-instance-method">
+    <div class="entry-detail" id="f_quantized:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_perbase</strong> : File?
+        def <strong>f_quantized</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_perbase%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_quantized%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L11" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_quantized:File?-instance-method">
+    <div class="entry-detail" id="f_region:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_quantized</strong> : File?
+        def <strong>f_region</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_quantized%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_region%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L8" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_region:File?-instance-method">
+    <div class="entry-detail" id="f_regions:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_region</strong> : File?
+        def <strong>f_regions</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_region%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_regions%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L10" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_regions:File?-instance-method">
+    <div class="entry-detail" id="f_summary:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_regions</strong> : File?
+        def <strong>f_summary</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_regions%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_summary%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L6" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="f_summary:File?-instance-method">
+    <div class="entry-detail" id="f_thresholds:File|Nil-instance-method">
       <div class="signature">
         
-        def <strong>f_summary</strong> : File?
+        def <strong>f_thresholds</strong> : File | Nil
 
-        <a class="method-permalink" href="#f_summary%3AFile%3F-instance-method">#</a>
+        <a class="method-permalink" href="#f_thresholds%3AFile%7CNil-instance-method">#</a>
       </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
-        
-      </div>
-    </div>
-  
-    <div class="entry-detail" id="f_thresholds:File?-instance-method">
-      <div class="signature">
-        
-        def <strong>f_thresholds</strong> : File?
-
-        <a class="method-permalink" href="#f_thresholds%3AFile%3F-instance-method">#</a>
-      </div>
-      
-      <br/>
-      <div>
-        
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L24" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L12" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -604,7 +583,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L50" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L42" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -620,7 +599,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L64" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L56" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -636,7 +615,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L55" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L47" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -652,7 +631,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L36" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L28" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -668,7 +647,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L76" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L68" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -684,7 +663,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/mofdepth/blob/15fc2028cf7518edd564723d9254df069e33078b/src/depth/io/output_manager.cr#L69" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/mofdepth/blob/902906fbf1a17b146356d65a6f508b67830a1aaf/src/depth/io/output_manager.cr#L61" target="_blank">View source</a>]
         
       </div>
     </div>
