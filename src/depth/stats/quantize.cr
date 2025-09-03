@@ -27,7 +27,7 @@ module Depth::Stats
       begin
         qs = a.split(':').map(&.to_i)
         qs.sort!
-        return qs
+        qs
       rescue ex
         STDERR.puts "[mofdepth] invalid quantize string: '#{qa}'"
         exit(2)
@@ -80,7 +80,7 @@ module Depth::Stats
 
     # Generate quantized depth segments
     # Yields tuples of (start, stop, label)
-    def self.gen_quantized(quants : Array(Int32), coverage : Array(Int32), &block : Tuple(Int32, Int32, String) ->)
+    def self.gen_quantized(quants : Array(Int32), coverage : Array(Int32), & : Tuple(Int32, Int32, String) ->)
       return if coverage.empty? || quants.empty?
 
       lookup = make_lookup(quants)

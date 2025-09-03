@@ -10,13 +10,13 @@ describe Depth::Config do
       config.threads.should eq(0)
       config.chrom.should eq("")
       config.by.should eq("")
-      config.no_per_base.should eq(false)
+      config.no_per_base.should be_false
       config.mapq.should eq(0)
       config.min_frag_len.should eq(-1)
       config.max_frag_len.should eq(-1)
-      config.fast_mode.should eq(false)
-      config.fragment_mode.should eq(false)
-      config.use_median.should eq(false)
+      config.fast_mode.should be_false
+      config.fragment_mode.should be_false
+      config.use_median.should be_false
       config.thresholds.should eq([] of Int32)
       config.quantize.should eq("")
     end
@@ -103,13 +103,13 @@ describe Depth::Config do
   describe "#has_regions?" do
     it "returns false for empty by" do
       config = Depth::Config.new
-      config.has_regions?.should eq(false)
+      config.has_regions?.should be_false
     end
 
     it "returns true for non-empty by" do
       config = Depth::Config.new
       config.by = "1000"
-      config.has_regions?.should eq(true)
+      config.has_regions?.should be_true
     end
   end
 
@@ -154,19 +154,19 @@ describe Depth::Config do
   describe "#has_quantize?" do
     it "returns false for empty quantize" do
       config = Depth::Config.new
-      config.has_quantize?.should eq(false)
+      config.has_quantize?.should be_false
     end
 
     it "returns false for 'nil' quantize" do
       config = Depth::Config.new
       config.quantize = "nil"
-      config.has_quantize?.should eq(false)
+      config.has_quantize?.should be_false
     end
 
     it "returns true for valid quantize string" do
       config = Depth::Config.new
       config.quantize = "0:1:4:"
-      config.has_quantize?.should eq(true)
+      config.has_quantize?.should be_true
     end
   end
 
@@ -202,8 +202,8 @@ describe Depth::Config do
       options.mapq.should eq(20)
       options.min_frag_len.should eq(100)
       options.max_frag_len.should eq(500)
-      options.fast_mode.should eq(true)
-      options.fragment_mode.should eq(false)
+      options.fast_mode.should be_true
+      options.fragment_mode.should be_false
     end
 
     it "handles negative max_frag_len" do
@@ -220,7 +220,7 @@ describe Depth::Config do
       config = Depth::Config.new
       config.quantize = "0:1:4:"
 
-      config.has_quantize?.should eq(true)
+      config.has_quantize?.should be_true
       args = config.quantize_args
       args.should eq([0, 1, 4, Int32::MAX])
 
