@@ -1,36 +1,28 @@
 require "../stats/depth_stat"
+require "../config"
 
 module Depth::FileIO
   class OutputManager
-    @f_summary : File?
-    @f_global : File?
-    @f_region : File?
-    @f_perbase : File?
-    @f_regions : File?
-    @f_quantized : File?
-    @f_thresholds : File?
+    getter f_summary : File?
+    getter f_global : File?
+    getter f_region : File?
+    getter f_perbase : File?
+    getter f_regions : File?
+    getter f_quantized : File?
+    getter f_thresholds : File?
     @header_written = false
+    @prefix : String
 
-    def initialize(@prefix : String)
-      @f_summary = nil
-      @f_global = nil
-      @f_region = nil
-      @f_perbase = nil
-      @f_regions = nil
-      @f_quantized = nil
-      @f_thresholds = nil
-    end
+    def initialize(config : Config)
+      @prefix = config.prefix
 
-    getter f_summary, f_global, f_region, f_perbase, f_regions, f_quantized, f_thresholds
-
-    def create_files(no_per_base : Bool = false, has_regions : Bool = false, has_quantize : Bool = false, has_thresholds : Bool = false)
       @f_summary = File.open("#{@prefix}.depth.summary.txt", "w")
       @f_global = File.open("#{@prefix}.depth.global.dist.txt", "w")
-      @f_region = has_regions ? File.open("#{@prefix}.depth.region.dist.txt", "w") : nil
-      @f_perbase = no_per_base ? nil : File.open("#{@prefix}.per-base.bed", "w")
-      @f_regions = has_regions ? File.open("#{@prefix}.regions.bed", "w") : nil
-      @f_quantized = has_quantize ? File.open("#{@prefix}.quantized.bed", "w") : nil
-      @f_thresholds = has_thresholds ? File.open("#{@prefix}.thresholds.bed", "w") : nil
+      @f_region = config.has_regions? ? File.open("#{@prefix}.depth.region.dist.txt", "w") : nil
+      @f_perbase = config.no_per_base? ? nil : File.open("#{@prefix}.per-base.bed", "w")
+      @f_regions = config.has_regions? ? File.open("#{@prefix}.regions.bed", "w") : nil
+      @f_quantized = config.has_quantize? ? File.open("#{@prefix}.quantized.bed", "w") : nil
+      @f_thresholds = config.has_thresholds? ? File.open("#{@prefix}.thresholds.bed", "w") : nil
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)

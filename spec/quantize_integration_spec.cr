@@ -31,9 +31,12 @@ describe "Quantize Integration" do
   describe "OutputManager with quantize" do
     it "creates quantized output file when has_quantize is true" do
       prefix = "test_quantize"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.quantize = "0:1:4:"
 
-      output.create_files(no_per_base: false, has_regions: false, has_quantize: true)
+      output = Depth::FileIO::OutputManager.new(config)
 
       # Check that quantized file was created
       output.f_quantized.should_not be_nil
@@ -53,9 +56,12 @@ describe "Quantize Integration" do
 
     it "does not create quantized output file when has_quantize is false" do
       prefix = "test_no_quantize"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.quantize = ""
 
-      output.create_files(no_per_base: false, has_regions: false, has_quantize: false)
+      output = Depth::FileIO::OutputManager.new(config)
 
       # Check that quantized file was not created
       output.f_quantized.should be_nil

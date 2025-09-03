@@ -34,8 +34,7 @@ module Depth
       opts = @config.to_options
 
       # Create output manager
-      output = FileIO::OutputManager.new(@config.prefix)
-      output.create_files(@config.no_per_base?, @config.has_regions?, @config.has_quantize?, @config.has_thresholds?)
+      output = FileIO::OutputManager.new(@config)
 
       # Write threshold header if needed
       if @config.has_thresholds?

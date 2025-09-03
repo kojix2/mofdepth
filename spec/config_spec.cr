@@ -10,13 +10,13 @@ describe Depth::Config do
       config.threads.should eq(0)
       config.chrom.should eq("")
       config.by.should eq("")
-      config.no_per_base.should be_false
+      config.no_per_base?.should be_false
       config.mapq.should eq(0)
       config.min_frag_len.should eq(-1)
       config.max_frag_len.should eq(-1)
-      config.fast_mode.should be_false
-      config.fragment_mode.should be_false
-      config.use_median.should be_false
+      config.fast_mode?.should be_false
+      config.fragment_mode?.should be_false
+      config.use_median?.should be_false
       config.thresholds.should eq([] of Int32)
       config.quantize.should eq("")
     end

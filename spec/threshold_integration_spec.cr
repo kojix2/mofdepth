@@ -49,10 +49,15 @@ describe "Threshold Integration" do
   describe "OutputManager with thresholds" do
     it "creates threshold output file when has_thresholds is true" do
       prefix = "test_threshold"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.by = "100" # regions required for thresholds
+      config.thresholds_str = "1,5,10"
+
+      output = Depth::FileIO::OutputManager.new(config)
 
       begin
-        output.create_files(false, true, false, true)
         output.f_thresholds.should_not be_nil
         File.exists?("#{prefix}.thresholds.bed").should be_true
       ensure
@@ -68,10 +73,14 @@ describe "Threshold Integration" do
 
     it "does not create threshold output file when has_thresholds is false" do
       prefix = "test_no_threshold"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.by = "100" # regions specified but no thresholds
+
+      output = Depth::FileIO::OutputManager.new(config)
 
       begin
-        output.create_files(false, true, false, false)
         output.f_thresholds.should be_nil
         File.exists?("#{prefix}.thresholds.bed").should be_false
       ensure
@@ -86,10 +95,15 @@ describe "Threshold Integration" do
 
     it "writes threshold header correctly" do
       prefix = "test_header"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.by = "100"
+      config.thresholds_str = "1,5,10"
+
+      output = Depth::FileIO::OutputManager.new(config)
 
       begin
-        output.create_files(false, true, false, true)
         thresholds = [1, 5, 10]
         output.write_thresholds_header(thresholds)
         output.close_all
@@ -108,10 +122,15 @@ describe "Threshold Integration" do
 
     it "writes threshold counts correctly" do
       prefix = "test_counts"
-      output = Depth::FileIO::OutputManager.new(prefix)
+      config = Depth::Config.new
+      config.prefix = prefix
+      config.path = "test.bam"
+      config.by = "100"
+      config.thresholds_str = "1,5,10"
+
+      output = Depth::FileIO::OutputManager.new(config)
 
       begin
-        output.create_files(false, true, false, true)
         thresholds = [1, 5, 10]
         output.write_thresholds_header(thresholds)
 
