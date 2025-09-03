@@ -16,9 +16,9 @@ module Depth::FileIO
     def initialize(config : Config)
       @prefix = config.prefix
 
-      @f_summary = File.open("#{@prefix}.depth.summary.txt", "w")
-      @f_global = File.open("#{@prefix}.depth.global.dist.txt", "w")
-      @f_region = config.has_regions? ? File.open("#{@prefix}.depth.region.dist.txt", "w") : nil
+      @f_summary = File.open("#{@prefix}.mosdepth.summary.txt", "w")
+      @f_global = File.open("#{@prefix}.mosdepth.global.dist.txt", "w")
+      @f_region = config.has_regions? ? File.open("#{@prefix}.mosdepth.region.dist.txt", "w") : nil
       @f_perbase = config.no_per_base? ? nil : File.open("#{@prefix}.per-base.bed", "w")
       @f_regions = config.has_regions? ? File.open("#{@prefix}.regions.bed", "w") : nil
       @f_quantized = config.has_quantize? ? File.open("#{@prefix}.quantized.bed", "w") : nil

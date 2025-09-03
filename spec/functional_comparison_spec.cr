@@ -71,8 +71,8 @@ describe "Functional comparison with mosdepth" do
       moffdepth_status.success?.should be_true
 
       # Compare per-base output
-      mosdepth_file = "#{temp_dir}/mosdepth_test.per-base.bed.gz"
-      moffdepth_file = "#{temp_dir}/moffdepth_test.per-base.bed.gz"
+      mosdepth_file = "#{temp_dir}/mosdepth_test.per-base.bed"
+      moffdepth_file = "#{temp_dir}/moffdepth_test.per-base.bed"
 
       File.exists?(mosdepth_file).should be_true
       File.exists?(moffdepth_file).should be_true
@@ -109,8 +109,8 @@ describe "Functional comparison with mosdepth" do
       moffdepth_status.success?.should be_true
 
       # Both should produce output files
-      File.exists?("#{temp_dir}/mosdepth_flag.per-base.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_flag.per-base.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_flag.per-base.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_flag.per-base.bed").should be_true
     end
 
     it "handles include flag filtering" do
@@ -122,8 +122,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_include.per-base.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_include.per-base.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_include.per-base.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_include.per-base.bed").should be_true
     end
   end
 
@@ -136,8 +136,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_quant.quantized.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_quant.quantized.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_quant.quantized.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_quant.quantized.bed").should be_true
     end
   end
 
@@ -150,8 +150,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_window.regions.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_window.regions.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_window.regions.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_window.regions.bed").should be_true
     end
 
     it "handles BED file regions" do
@@ -165,8 +165,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_bed.regions.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_bed.regions.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_bed.regions.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_bed.regions.bed").should be_true
     end
   end
 
@@ -179,8 +179,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_thresh.thresholds.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_thresh.thresholds.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_thresh.thresholds.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_thresh.thresholds.bed").should be_true
     end
   end
 
@@ -193,8 +193,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_fast.per-base.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_fast.per-base.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_fast.per-base.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_fast.per-base.bed").should be_true
     end
   end
 
@@ -211,8 +211,8 @@ describe "Functional comparison with mosdepth" do
       mosdepth_status.success?.should be_true
       moffdepth_status.success?.should be_true
 
-      File.exists?("#{temp_dir}/mosdepth_frag.per-base.bed.gz").should be_true
-      File.exists?("#{temp_dir}/moffdepth_frag.per-base.bed.gz").should be_true
+      File.exists?("#{temp_dir}/mosdepth_frag.per-base.bed").should be_true
+      File.exists?("#{temp_dir}/moffdepth_frag.per-base.bed").should be_true
     end
   end
 
