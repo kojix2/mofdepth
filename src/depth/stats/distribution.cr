@@ -1,5 +1,3 @@
-require "../core/types"
-
 module Depth::Stats
   module Distribution
     def bump_distribution!(dist : Array(Int64), a : Depth::Core::Coverage, start_i : Int32, stop_i : Int32)

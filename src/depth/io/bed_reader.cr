@@ -1,4 +1,4 @@
-require "../core/types"
+require "../core/region"
 
 module Depth::FileIO
   # Parse region like: chr1, chr1:100-200, or BED line

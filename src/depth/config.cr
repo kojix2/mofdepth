@@ -1,6 +1,6 @@
-require "./core/types"
 require "./stats/quantize"
 require "./stats/threshold"
+require "./core/options"
 
 module Depth
   class Config

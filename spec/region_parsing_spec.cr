@@ -1,6 +1,5 @@
 require "./spec_helper"
 require "../src/depth/io/bed_reader"
-require "../src/depth/core/types"
 
 describe "Region Parsing" do
   describe "parse_region_str" do

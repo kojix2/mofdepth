@@ -1,6 +1,7 @@
 require "hts"
-require "./types"
 require "./cigar"
+require "./constants"
+require "./coverage_result"
 require "./coverage_utils"
 
 module Depth::Core

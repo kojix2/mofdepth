@@ -1,5 +1,3 @@
-require "./types"
-
 module Depth::Core
   module Cigar
     # CIGAR → start/end events on reference
