@@ -15,15 +15,24 @@ module Depth::FileIO
 
     def initialize(config : Config)
       @prefix = config.prefix
+      
+      # Use PWD environment variable if set and prefix is relative, otherwise use prefix as-is
+      if ENV.has_key?("PWD") && !@prefix.starts_with?("/")
+        output_dir = ENV["PWD"]
+        base_prefix = File.join(output_dir, @prefix)
+      else
+        base_prefix = @prefix
+      end
+      
       label = config.mos_style? ? "mosdepth" : "depth"
 
-      @f_summary = File.open("#{@prefix}.#{label}.summary.txt", "w")
-      @f_global = File.open("#{@prefix}.#{label}.global.dist.txt", "w")
-      @f_region = config.has_regions? ? File.open("#{@prefix}.#{label}.region.dist.txt", "w") : nil
-      @f_perbase = config.no_per_base? ? nil : File.open("#{@prefix}.per-base.bed", "w")
-      @f_regions = config.has_regions? ? File.open("#{@prefix}.regions.bed", "w") : nil
-      @f_quantized = config.has_quantize? ? File.open("#{@prefix}.quantized.bed", "w") : nil
-      @f_thresholds = config.has_thresholds? ? File.open("#{@prefix}.thresholds.bed", "w") : nil
+      @f_summary = File.open("#{base_prefix}.#{label}.summary.txt", "w")
+      @f_global = File.open("#{base_prefix}.#{label}.global.dist.txt", "w")
+      @f_region = config.has_regions? ? File.open("#{base_prefix}.#{label}.region.dist.txt", "w") : nil
+      @f_perbase = config.no_per_base? ? nil : File.open("#{base_prefix}.per-base.bed", "w")
+      @f_regions = config.has_regions? ? File.open("#{base_prefix}.regions.bed", "w") : nil
+      @f_quantized = config.has_quantize? ? File.open("#{base_prefix}.quantized.bed", "w") : nil
+      @f_thresholds = config.has_thresholds? ? File.open("#{base_prefix}.thresholds.bed", "w") : nil
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)
