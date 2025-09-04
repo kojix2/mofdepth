@@ -24,6 +24,10 @@ module Depth::FileIO
         base_prefix = @prefix
       end
       
+      # Ensure parent directory exists for output files
+      parent_dir = File.dirname(base_prefix)
+      Dir.mkdir_p(parent_dir) unless Dir.exists?(parent_dir)
+      
       label = config.mos_style? ? "mosdepth" : "depth"
 
       @f_summary = File.open("#{base_prefix}.#{label}.summary.txt", "w")
