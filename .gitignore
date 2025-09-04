@@ -3,3 +3,12 @@
 /bin/
 /.shards/
 *.dwarf
+
+# Ignore binary executables
+depth
+mosdepth
+
+# Ignore test output files
+test_prefix.*
+*.depth.*
+*.per-base.bed
