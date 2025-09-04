@@ -1,0 +1,3 @@
+chrom	length	bases	mean	min	max
+MT	16569	80	0.00	0	1
+total	16569	80	0.00	0	1
