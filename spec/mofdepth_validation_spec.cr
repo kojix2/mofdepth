@@ -45,10 +45,10 @@ describe "moffdepth validation tests" do
     end
 
     it "produces summary output" do
-      status = run_moffdepth_validation([] of String, "#{temp_dir}/summary_test", test_bam, temp_dir)
+      status = run_moffdepth_validation(["-M"], "#{temp_dir}/summary_test", test_bam, temp_dir)
       status.success?.should be_true
 
-      summary_file = "#{temp_dir}/summary_test.depth.summary.txt"
+      summary_file = "#{temp_dir}/summary_test.mosdepth.summary.txt"
       File.exists?(summary_file).should be_true
       File.size(summary_file).should be > 0
 
@@ -59,10 +59,10 @@ describe "moffdepth validation tests" do
     end
 
     it "produces distribution output" do
-      status = run_moffdepth_validation([] of String, "#{temp_dir}/dist_test", test_bam, temp_dir)
+      status = run_moffdepth_validation(["-M"], "#{temp_dir}/dist_test", test_bam, temp_dir)
       status.success?.should be_true
 
-      dist_file = "#{temp_dir}/dist_test.depth.global.dist.txt"
+      dist_file = "#{temp_dir}/dist_test.mosdepth.global.dist.txt"
       File.exists?(dist_file).should be_true
       File.size(dist_file).should be > 0
     end
@@ -189,13 +189,13 @@ describe "moffdepth validation tests" do
 
   describe "output format validation" do
     it "produces mosdepth-compatible file names" do
-      status = run_moffdepth_validation([] of String, "#{temp_dir}/format_test", test_bam, temp_dir)
+      status = run_moffdepth_validation(["-M"], "#{temp_dir}/format_test", test_bam, temp_dir)
       status.success?.should be_true
 
       # Check expected file names match mosdepth format
       File.exists?("#{temp_dir}/format_test.per-base.bed").should be_true
-      File.exists?("#{temp_dir}/format_test.depth.summary.txt").should be_true
-      File.exists?("#{temp_dir}/format_test.depth.global.dist.txt").should be_true
+      File.exists?("#{temp_dir}/format_test.mosdepth.summary.txt").should be_true
+      File.exists?("#{temp_dir}/format_test.mosdepth.global.dist.txt").should be_true
     end
 
     it "produces valid BED format output" do

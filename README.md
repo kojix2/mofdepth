@@ -57,6 +57,7 @@ crystal build src/depth.cr --release
 - `-x, --fast-mode`: Fast mode (read start/end positions only)
 - `-a, --fragment-mode`: Count full fragment (proper pairs only)
 - `-m, --use-median`: Use median for region stats instead of mean
+- `-M, --mos`: Use mosdepth-compatible filenames (mosdepth.*); default is depth.*
 - `-v, --version`: Show version
 - `-h, --help`: Show help message
 
@@ -70,11 +71,13 @@ crystal build src/depth.cr --release
 
 ### Output files
 
-- `<prefix>.depth.summary.txt`: Per-chromosome summary statistics
-- `<prefix>.per-base.bed`: Per-base depth (unless `-n` is used)
-- `<prefix>.depth.global.dist.txt`: Global depth distribution
-- `<prefix>.regions.bed`: Region-based statistics (when using `-b`)
-- `<prefix>.depth.region.dist.txt`: Region depth distribution (when using `-b`)
+- Summary: `<prefix>.(depth|mosdepth).summary.txt`
+- Per-base: `<prefix>.per-base.bed` (unless `-n`)
+- Global dist: `<prefix>.(depth|mosdepth).global.dist.txt`
+- Regions: `<prefix>.regions.bed` (when `--by`)
+- Region dist: `<prefix>.(depth|mosdepth).region.dist.txt` (when `--by`)
+
+By default, files are named with the `depth.*` label. Use `-M/--mos` to switch to `mosdepth.*`.
 
 ### Summary file format
 

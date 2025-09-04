@@ -29,6 +29,7 @@ module Depth
         psr.on("-i", "--include-flag FLAG", "Include only reads with FLAG bits set") { |v| config.include_flag = v.to_u16 }
         psr.on("-R", "--read-groups GROUPS", "Comma-separated read group IDs") { |v| config.read_groups_str = v }
         psr.on("-v", "--version", "Show version") { puts Depth::VERSION; exit 0 }
+        psr.on("-M", "--mos", "Use mosdepth-compatible filenames (mosdepth.*)") { config.mos_style = true }
         psr.on("-h", "--help", "Show this message") { puts psr; exit 0 }
 
         psr.invalid_option do |opt|

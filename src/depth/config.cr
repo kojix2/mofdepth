@@ -22,6 +22,8 @@ module Depth
     property exclude_flag : UInt16 = 1796_u16
     property include_flag : UInt16 = 0_u16
     property read_groups_str : String = ""
+    # When true, use mosdepth-compatible names (mosdepth.*); otherwise depth.*
+    property? mos_style : Bool = false
 
     def validate!
       raise ArgumentError.new("BAM/CRAM path is required") if path.empty?
