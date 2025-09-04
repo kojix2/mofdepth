@@ -35,7 +35,7 @@ module Depth::FileIO
       end
 
       mean = stat.n_bases > 0 ? stat.sum_depth.to_f / stat.n_bases : 0.0
-      pr = (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
+      pr = (ENV["MOFFDEPTH_PRECISION"]?.try &.to_i?) || (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
       mean_str = sprintf("%.#{pr}f", mean)
       minv = stat.min_depth == Int32::MAX ? 0 : stat.min_depth
       # mosdepth uses cumulative depth in the 'bases' column
@@ -46,7 +46,7 @@ module Depth::FileIO
     def write_summary_total(total : Depth::Stats::DepthStat)
       return unless @f_summary
       mean = total.n_bases > 0 ? total.sum_depth.to_f / total.n_bases : 0.0
-      pr = (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
+      pr = (ENV["MOFFDEPTH_PRECISION"]?.try &.to_i?) || (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
       mean_str = sprintf("%.#{pr}f", mean)
       minv = total.min_depth == Int32::MAX ? 0 : total.min_depth
       @f_summary.not_nil! << ["total", total.n_bases, total.sum_depth, mean_str, minv, total.max_depth].join("\t") << "\n"
@@ -59,10 +59,12 @@ module Depth::FileIO
 
     def write_region_stat(chrom : String, start : Int32, stop : Int32, name : String?, value : Float64)
       return unless @f_regions
+      pr = (ENV["MOFFDEPTH_PRECISION"]?.try &.to_i?) || (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
+      val_str = sprintf("%.#{pr}f", value)
       if name
-        @f_regions.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << name << "\t" << value << "\n"
+        @f_regions.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << name << "\t" << val_str << "\n"
       else
-        @f_regions.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << value << "\n"
+        @f_regions.not_nil! << chrom << "\t" << start << "\t" << stop << "\t" << val_str << "\n"
       end
     end
 
