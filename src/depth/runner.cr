@@ -139,6 +139,8 @@ module Depth
           end
           global_dist.fill(0_i64)
         end
+  # Append mosdepth-like total line
+  output.write_summary_total(global_stat)
       ensure
         output.close_all
       end

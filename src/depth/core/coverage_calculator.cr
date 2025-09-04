@@ -9,6 +9,8 @@ module Depth::Core
     include Cigar
 
     def initialize(@bam : HTS::Bam, @options : Options)
+      # store first-read of overlapping proper pairs to correct double-counting when mate arrives
+      @seen = Hash(String, HTS::Bam::Record).new
     end
 
     # Check if record should be filtered out
@@ -48,7 +50,43 @@ module Depth::Core
         coverage[frag_start] += 1
         coverage[end_pos] -= 1
       else
-        # use instance method from Cigar
+        # Default (per-base) mode with mosdepth-like mate-overlap correction
+        if @options.fast_mode == false && @options.fragment_mode == false &&
+           rec.flag.proper_pair? && !rec.flag.supplementary? && rec.tid == rec.mtid && rec.mate_pos >= 0
+          rec_start = rec.pos.to_i32
+          rec_stop = rec.endpos
+          # If this read overlaps its mate and is the earlier (or equal) one, store it; otherwise, if mate was stored, correct overlap now
+          if rec_stop > rec.mate_pos && (rec_start < rec.mate_pos || (rec_start == rec.mate_pos && !@seen.has_key?(rec.qname)))
+            # store a clone since records are reused
+            @seen[rec.qname] = rec.clone
+          else
+            if mate = @seen.delete(rec.qname)
+              # Build combined start/end events for rec and mate, then subtract only intervals where pair_depth==2
+              ses = [] of Tuple(Int32, Int32)
+              cigar_start_end_events(rec.cigar, rec_start).each { |p| ses << p }
+              cigar_start_end_events(mate.cigar, mate.pos.to_i32).each { |p| ses << p }
+              ses.sort_by! { |(p, _)| p }
+              pair_depth = 0
+              last_pos = 0
+              ses.each do |pos, val|
+                # when exiting an overlap (val == -1 while at depth 2), subtract that interval once
+                if val == -1 && pair_depth == 2
+                  s = last_pos
+                  e = pos
+                  if e > s
+                    s = s.clamp(0, coverage.size - 1)
+                    e = e.clamp(0, coverage.size - 1)
+                    coverage[s] -= 1
+                    coverage[e] += 1
+                  end
+                end
+                pair_depth += val
+                last_pos = pos
+              end
+            end
+          end
+        end
+        # Always add coverage for this record after possible overlap correction step
         inc_coverage(rec.cigar, rec.pos.to_i32, coverage)
       end
     end
@@ -77,6 +115,7 @@ module Depth::Core
                         @bam.header.target_len[chrom_tid].to_i32
                       end
           initialize_coverage_array(a, chrom_len)
+          @seen.clear
           found = true
         end
 
@@ -104,6 +143,7 @@ module Depth::Core
           current_tid = chrom_tid
           chrom_len = @bam.header.target_len[chrom_tid].to_i32
           initialize_coverage_array(a, chrom_len)
+          @seen.clear
           found = true
         end
 

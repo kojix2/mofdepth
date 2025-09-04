@@ -52,5 +52,32 @@ module Depth::Core
         a[p] += val
       end
     end
+
+    # Build contiguous reference-aligned segments [start, stop) for M/= /X parts.
+    # This mirrors cigar_start_end_events but returns merged intervals directly.
+    def cigar_segments(cigar, ipos : Int32) : Array(Tuple(Int32, Int32))
+      segs = [] of Tuple(Int32, Int32)
+      pos = ipos
+      seg_start = -1
+      seg_stop = -1
+      cigar.each do |op_char, olen|
+        consumes_ref = ['M', 'D', 'N', '=', 'X'].includes?(op_char)
+        next unless consumes_ref
+
+        consumes_query = ['M', 'I', 'S', '=', 'X'].includes?(op_char)
+        if consumes_query
+          # start new segment if discontinuous
+          if pos != seg_stop
+            # close previous
+            segs << {seg_start, seg_stop} if seg_start >= 0 && seg_stop >= 0
+            seg_start = pos
+          end
+          seg_stop = pos + olen.to_i32
+        end
+        pos += olen.to_i32
+      end
+      segs << {seg_start, seg_stop} if seg_start >= 0 && seg_stop >= 0
+      segs
+    end
   end
 end
