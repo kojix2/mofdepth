@@ -43,7 +43,6 @@ jobs:
             mingw-w64-x86_64-crystal
             mingw-w64-x86_64-shards
             mingw-w64-x86_64-xz
-            mingw-w64-x86_64-curl
             mingw-w64-x86_64-libdeflate
             mingw-w64-x86_64-pkgconf
             mingw-w64-x86_64-openssl
