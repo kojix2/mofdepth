@@ -22,12 +22,26 @@ module Depth::Stats
       # cumulative from high → low so line is: depth \t cumulative_fraction
       rev = dist.dup.reverse
       cum = 0.0
+      pr = (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
       rev.each_with_index do |v, i|
         irev = dist.size - i - 1
         next if irev > 300 && v == 0
         cum += v.to_f / sum
         next if cum < 8e-5
-        io << chrom << "\t" << irev << "\t" << cum << '\n'
+        io << chrom << "\t" << irev << "\t" << sprintf("%.#{pr}f", cum) << '\n'
+      end
+    end
+
+    # Add dist_from into dist_to, resizing dist_to if needed (mosdepth sum_into)
+    def sum_into!(dist_to : Array(Int64), dist_from : Array(Int64))
+      if dist_from.size > dist_to.size
+        old = dist_to.size
+        dist_to.concat(Array.new(dist_from.size - old, 0_i64))
+      end
+      i = 0
+      while i < dist_from.size
+        dist_to[i] += dist_from[i]
+        i += 1
       end
     end
   end
