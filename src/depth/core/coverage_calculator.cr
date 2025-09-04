@@ -61,27 +61,38 @@ module Depth::Core
             @seen[rec.qname] = rec.clone
           else
             if mate = @seen.delete(rec.qname)
-              # Build combined start/end events for rec and mate, then subtract only intervals where pair_depth==2
-              ses = [] of Tuple(Int32, Int32)
-              cigar_start_end_events(rec.cigar, rec_start).each { |p| ses << p }
-              cigar_start_end_events(mate.cigar, mate.pos.to_i32).each { |p| ses << p }
-              ses.sort_by! { |(p, _)| p }
-              pair_depth = 0
-              last_pos = 0
-              ses.each do |pos, val|
-                # when exiting an overlap (val == -1 while at depth 2), subtract that interval once
-                if val == -1 && pair_depth == 2
-                  s = last_pos
-                  e = pos
-                  if e > s
-                    s = s.clamp(0, coverage.size - 1)
-                    e = e.clamp(0, coverage.size - 1)
-                    coverage[s] -= 1
-                    coverage[e] += 1
-                  end
+              # Fast path: both reads have single M op
+              if rec.cigar.size == 1 && mate.cigar.size == 1
+                s = [rec_start, mate.pos.to_i32].max
+                e = [rec_stop, mate.endpos].min
+                if e > s
+                  s = s.clamp(0, coverage.size - 1)
+                  e = e.clamp(0, coverage.size - 1)
+                  coverage[s] -= 1
+                  coverage[e] += 1
                 end
-                pair_depth += val
-                last_pos = pos
+              else
+                # Build combined start/end events for rec and mate, subtract where pair_depth==2
+                ses = [] of Tuple(Int32, Int32)
+                cigar_start_end_events(rec.cigar, rec_start).each { |p| ses << p }
+                cigar_start_end_events(mate.cigar, mate.pos.to_i32).each { |p| ses << p }
+                ses.sort_by! { |(p, _)| p }
+                pair_depth = 0
+                last_pos = 0
+                ses.each do |pos, val|
+                  if val == -1 && pair_depth == 2
+                    s = last_pos
+                    e = pos
+                    if e > s
+                      s = s.clamp(0, coverage.size - 1)
+                      e = e.clamp(0, coverage.size - 1)
+                      coverage[s] -= 1
+                      coverage[e] += 1
+                    end
+                  end
+                  pair_depth += val
+                  last_pos = pos
+                end
               end
             end
           end
