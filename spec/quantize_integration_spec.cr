@@ -9,6 +9,10 @@ module TestCleanup
     files_to_clean = [
       "#{prefix}.quantized.bed",
       "#{prefix}.per-base.bed",
+      # summary/dist both styles
+      "#{prefix}.depth.summary.txt",
+      "#{prefix}.depth.global.dist.txt",
+      "#{prefix}.depth.region.dist.txt",
       "#{prefix}.mosdepth.summary.txt",
       "#{prefix}.mosdepth.global.dist.txt",
       "#{prefix}.mosdepth.region.dist.txt",
