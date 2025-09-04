@@ -45,11 +45,11 @@ module Depth::FileIO
     # Optionally call at end to add a total line like mosdepth
     def write_summary_total(total : Depth::Stats::DepthStat)
       return unless @f_summary
-  mean = total.n_bases > 0 ? total.sum_depth.to_f / total.n_bases : 0.0
-  pr = (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
-  mean_str = sprintf("%.#{pr}f", mean)
+      mean = total.n_bases > 0 ? total.sum_depth.to_f / total.n_bases : 0.0
+      pr = (ENV["MOSDEPTH_PRECISION"]?.try &.to_i?) || 2
+      mean_str = sprintf("%.#{pr}f", mean)
       minv = total.min_depth == Int32::MAX ? 0 : total.min_depth
-  @f_summary.not_nil! << ["total", total.n_bases, total.sum_depth, mean_str, minv, total.max_depth].join("\t") << "\n"
+      @f_summary.not_nil! << ["total", total.n_bases, total.sum_depth, mean_str, minv, total.max_depth].join("\t") << "\n"
     end
 
     def write_per_base_interval(chrom : String, start : Int32, stop : Int32, depth : Int32)

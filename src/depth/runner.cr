@@ -62,10 +62,10 @@ module Depth
                       end
 
         # Initialize statistics
-  global_dist = Array(Int64).new(512, 0_i64)
-  total_global_dist = Array(Int64).new(512, 0_i64)
-  region_dist = Array(Int64).new(512, 0_i64)
-  total_region_dist = Array(Int64).new(512, 0_i64)
+        global_dist = Array(Int64).new(512, 0_i64)
+        total_global_dist = Array(Int64).new(512, 0_i64)
+        region_dist = Array(Int64).new(512, 0_i64)
+        total_region_dist = Array(Int64).new(512, 0_i64)
         global_stat = Stats::DepthStat.new
         cs = Stats::IntHistogram.new(@config.use_median? ? 65_536 : 0)
 
@@ -145,14 +145,14 @@ module Depth
           end
           global_dist.fill(0_i64)
         end
-  # Append mosdepth-like total lines
-  output.write_summary_total(global_stat)
-  if f_global = output.f_global
-    self.class.write_distribution(f_global.as(::IO), "total", total_global_dist)
-  end
-  if f_region = output.f_region
-    self.class.write_distribution(f_region.as(::IO), "total", total_region_dist)
-  end
+        # Append mosdepth-like total lines
+        output.write_summary_total(global_stat)
+        if f_global = output.f_global
+          self.class.write_distribution(f_global.as(::IO), "total", total_global_dist)
+        end
+        if f_region = output.f_region
+          self.class.write_distribution(f_region.as(::IO), "total", total_region_dist)
+        end
       ensure
         output.close_all
       end
