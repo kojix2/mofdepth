@@ -13,8 +13,11 @@ module Depth::FileIO
     getter f_thresholds : (File | HTS::Bgzf)?
     @header_written = false
     @prefix : String
+    @config : Depth::Config
+    @paths_to_index : Array(String)
 
     def initialize(config : Config)
+      @config = config
       @prefix = config.prefix
       label = config.mos_style? ? "mosdepth" : "depth"
 
@@ -22,10 +25,38 @@ module Depth::FileIO
       @f_global = File.open("#{@prefix}.#{label}.global.dist.txt", "w")
       @f_region = config.has_regions? ? File.open("#{@prefix}.#{label}.region.dist.txt", "w") : nil
       # Use BGZF for BED-like interval outputs (mosdepth-compatible behavior)
-      @f_perbase = config.no_per_base? ? nil : HTS::Bgzf.open("#{@prefix}.per-base.bed.gz", "wz")
-      @f_regions = config.has_regions? ? HTS::Bgzf.open("#{@prefix}.regions.bed.gz", "wz") : nil
-      @f_quantized = config.has_quantize? ? HTS::Bgzf.open("#{@prefix}.quantized.bed.gz", "wz") : nil
-      @f_thresholds = config.has_thresholds? ? HTS::Bgzf.open("#{@prefix}.thresholds.bed.gz", "wz") : nil
+      @paths_to_index = [] of String
+      @f_perbase = if config.no_per_base?
+                     nil
+                   else
+                     path = "#{@prefix}.per-base.bed.gz"
+                     @paths_to_index << path
+                     HTS::Bgzf.open(path, "wz")
+                   end
+
+      @f_regions = if config.has_regions?
+                     path = "#{@prefix}.regions.bed.gz"
+                     @paths_to_index << path
+                     HTS::Bgzf.open(path, "wz")
+                   else
+                     nil
+                   end
+
+      @f_quantized = if config.has_quantize?
+                       path = "#{@prefix}.quantized.bed.gz"
+                       @paths_to_index << path
+                       HTS::Bgzf.open(path, "wz")
+                     else
+                       nil
+                     end
+
+      @f_thresholds = if config.has_thresholds?
+                        path = "#{@prefix}.thresholds.bed.gz"
+                        @paths_to_index << path
+                        HTS::Bgzf.open(path, "wz")
+                      else
+                        nil
+                      end
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)
@@ -98,6 +129,24 @@ module Depth::FileIO
       # BGZF streams (respond to close as well)
       [@f_perbase, @f_regions, @f_quantized, @f_thresholds].each do |io|
         io.try(&.close)
+      end
+
+      # Always build CSI indices for BGZF interval outputs
+      build_csi_indices
+    end
+
+    private def build_csi_indices
+      # Use htslib's tbx_index_build3 with the built-in BED preset ($tbx_conf_bed)
+      # min_shift=14 requests CSI index (instead of TBI)
+      conf_ptr = pointerof(HTS::LibHTS.tbx_conf_bed)
+
+      @paths_to_index.each do |gz|
+        # Build explicit .csi next to gz
+        csi = "#{gz}.csi"
+        ret = HTS::LibHTS.tbx_index_build3(gz, csi, 14, @config.threads, conf_ptr)
+        if ret != 0
+          STDERR.puts "[depth] warning: failed to build CSI for #{gz} (tbx_index_build3 ret=#{ret})"
+        end
       end
     end
   end
