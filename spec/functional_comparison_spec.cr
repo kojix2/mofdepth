@@ -34,17 +34,8 @@ def compare_files(file1 : String, file2 : String) : Bool
   return false unless File.exists?(file1) && File.exists?(file2)
 
   # Read content with per-file gzip handling
-  content1 = if file1.ends_with?(".gz")
-               `zcat #{file1}`
-             else
-               File.read(file1)
-             end
-
-  content2 = if file2.ends_with?(".gz")
-               `zcat #{file2}`
-             else
-               File.read(file2)
-             end
+  content1 = TestIO.read_text(file1)
+  content2 = TestIO.read_text(file2)
 
   content1.strip == content2.strip
 end
