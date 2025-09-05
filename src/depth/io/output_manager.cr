@@ -136,9 +136,18 @@ module Depth::FileIO
     end
 
     private def build_csi_indices
-      # Use htslib's tbx_index_build3 with the built-in BED preset ($tbx_conf_bed)
+      # Use htslib's tbx_index_build3 with a BED preset configuration.
+      # To avoid the issue where references to $tbx_conf_bed become __imp_* with MinGW static linking,
+      # construct TbxConfT locally and pass it instead of using a global variable.
       # min_shift=14 requests CSI index (instead of TBI)
-      conf_ptr = pointerof(HTS::LibHTS.tbx_conf_bed)
+      bed_conf = HTS::LibHTS::TbxConfT.new
+      bed_conf.preset = 0          # TBX_GENERIC
+      bed_conf.sc = 1              # seq col (1-based)
+      bed_conf.bc = 2              # begin col (1-based)
+      bed_conf.ec = 3              # end col (1-based)
+      bed_conf.meta_char = '#'.ord # comment/meta line start
+      bed_conf.line_skip = 0
+      conf_ptr = pointerof(bed_conf)
 
       @paths_to_index.each do |gz|
         # Build explicit .csi next to gz
