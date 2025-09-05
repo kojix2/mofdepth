@@ -7,10 +7,10 @@ module Depth::FileIO
     getter f_summary : File?
     getter f_global : File?
     getter f_region : File?
-  getter f_perbase : (File | HTS::Bgzf)?
-  getter f_regions : (File | HTS::Bgzf)?
-  getter f_quantized : (File | HTS::Bgzf)?
-  getter f_thresholds : (File | HTS::Bgzf)?
+    getter f_perbase : (File | HTS::Bgzf)?
+    getter f_regions : (File | HTS::Bgzf)?
+    getter f_quantized : (File | HTS::Bgzf)?
+    getter f_thresholds : (File | HTS::Bgzf)?
     @header_written = false
     @prefix : String
 
@@ -21,11 +21,11 @@ module Depth::FileIO
       @f_summary = File.open("#{@prefix}.#{label}.summary.txt", "w")
       @f_global = File.open("#{@prefix}.#{label}.global.dist.txt", "w")
       @f_region = config.has_regions? ? File.open("#{@prefix}.#{label}.region.dist.txt", "w") : nil
-  # Use BGZF for BED-like interval outputs (mosdepth-compatible behavior)
-  @f_perbase = config.no_per_base? ? nil : HTS::Bgzf.open("#{@prefix}.per-base.bed.gz", "wz")
-  @f_regions = config.has_regions? ? HTS::Bgzf.open("#{@prefix}.regions.bed.gz", "wz") : nil
-  @f_quantized = config.has_quantize? ? HTS::Bgzf.open("#{@prefix}.quantized.bed.gz", "wz") : nil
-  @f_thresholds = config.has_thresholds? ? HTS::Bgzf.open("#{@prefix}.thresholds.bed.gz", "wz") : nil
+      # Use BGZF for BED-like interval outputs (mosdepth-compatible behavior)
+      @f_perbase = config.no_per_base? ? nil : HTS::Bgzf.open("#{@prefix}.per-base.bed.gz", "wz")
+      @f_regions = config.has_regions? ? HTS::Bgzf.open("#{@prefix}.regions.bed.gz", "wz") : nil
+      @f_quantized = config.has_quantize? ? HTS::Bgzf.open("#{@prefix}.quantized.bed.gz", "wz") : nil
+      @f_thresholds = config.has_thresholds? ? HTS::Bgzf.open("#{@prefix}.thresholds.bed.gz", "wz") : nil
     end
 
     def write_summary_line(region : String, stat : Depth::Stats::DepthStat)
@@ -56,7 +56,7 @@ module Depth::FileIO
 
     def write_per_base_interval(chrom : String, start : Int32, stop : Int32, depth : Int32)
       return unless @f_perbase
-  @f_perbase.not_nil!.puts("#{chrom}\t#{start}\t#{stop}\t#{depth}")
+      @f_perbase.not_nil!.puts("#{chrom}\t#{start}\t#{stop}\t#{depth}")
     end
 
     def write_region_stat(chrom : String, start : Int32, stop : Int32, name : String?, value : Float64)
@@ -72,7 +72,7 @@ module Depth::FileIO
 
     def write_quantized_interval(chrom : String, start : Int32, stop : Int32, label : String)
       return unless @f_quantized
-  @f_quantized.not_nil!.puts("#{chrom}\t#{start}\t#{stop}\t#{label}")
+      @f_quantized.not_nil!.puts("#{chrom}\t#{start}\t#{stop}\t#{label}")
     end
 
     def write_thresholds_header(thresholds : Array(Int32))
