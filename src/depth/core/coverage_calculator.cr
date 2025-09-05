@@ -33,28 +33,29 @@ module Depth::Core
       false
     end
 
-    # Calculate coverage for a single record
-    private def accumulate_record!(rec, coverage : Coverage)
+  # Calculate coverage for a single record (positions are shifted by `offset` for region queries)
+  private def accumulate_record!(rec, coverage : Coverage, offset : Int32)
       if @options.fast_mode
-        start_pos = rec.pos.to_i32.clamp(0, coverage.size - 1)
+    start_pos = (rec.pos.to_i32 - offset).clamp(0, coverage.size - 1)
         coverage[start_pos] += 1
-        endp = rec.endpos.to_i32
-        endp = coverage.size - 1 if endp >= coverage.size
+    endp = (rec.endpos.to_i32 - offset)
+    endp = coverage.size - 1 if endp >= coverage.size
+    endp = 0 if endp < 0
         coverage[endp] -= 1
       elsif @options.fragment_mode
         return if rec.flag.read2? || !rec.flag.proper_pair? || rec.flag.supplementary?
-        frag_start = Math.min(rec.pos, rec.mate_pos).to_i32
+    frag_start = Math.min(rec.pos, rec.mate_pos).to_i32 - offset
         frag_len = rec.isize.abs
         end_pos = frag_start + frag_len
-        end_pos = coverage.size - 1 if end_pos >= coverage.size
-        coverage[frag_start.clamp(0, coverage.size - 1)] += 1
+    end_pos = coverage.size - 1 if end_pos >= coverage.size
+    coverage[frag_start.clamp(0, coverage.size - 1)] += 1
         coverage[end_pos] -= 1
       else
         # Default (per-base) mode with mosdepth-like mate-overlap correction
         if @options.fast_mode == false && @options.fragment_mode == false &&
            rec.flag.proper_pair? && !rec.flag.supplementary? && rec.tid == rec.mtid && rec.mate_pos >= 0
-          rec_start = rec.pos.to_i32
-          rec_stop = rec.endpos.to_i32
+      rec_start = rec.pos.to_i32
+      rec_stop = rec.endpos.to_i32
           # If this read overlaps its mate and is the earlier (or equal) one, store it; otherwise, if mate was stored, correct overlap now
           if rec_stop > rec.mate_pos && (rec_start < rec.mate_pos || (rec_start == rec.mate_pos && !@seen.has_key?(rec.qname)))
             # store a clone since records are reused
@@ -66,8 +67,8 @@ module Depth::Core
                 s = [rec_start, mate.pos.to_i32].max
                 e = [rec_stop, mate.endpos.to_i32].min
                 if e > s
-                  s = s.clamp(0, coverage.size - 1)
-                  e = e.clamp(0, coverage.size - 1)
+          s = (s - offset).clamp(0, coverage.size - 1)
+          e = (e - offset).clamp(0, coverage.size - 1)
                   coverage[s] -= 1
                   coverage[e] += 1
                 end
@@ -84,8 +85,8 @@ module Depth::Core
                     s = last_pos
                     e = pos
                     if e > s
-                      s = s.clamp(0, coverage.size - 1)
-                      e = e.clamp(0, coverage.size - 1)
+            s = (s - offset).clamp(0, coverage.size - 1)
+            e = (e - offset).clamp(0, coverage.size - 1)
                       coverage[s] -= 1
                       coverage[e] += 1
                     end
@@ -98,14 +99,14 @@ module Depth::Core
           end
         end
         # Always add coverage for this record after possible overlap correction step
-        apply_cigar!(rec.cigar, rec.pos.to_i32, coverage)
+    apply_cigar!(rec.cigar, rec.pos.to_i32, coverage, offset)
       end
     end
 
     # Apply cigar events into diff-array
-    private def apply_cigar!(cigar, ipos : Int32, a : Coverage)
+  private def apply_cigar!(cigar, ipos : Int32, a : Coverage, offset : Int32)
       cigar_start_end_events(cigar, ipos).each do |pos, val|
-        p = pos.clamp(0, a.size - 1)
+    p = (pos - offset).clamp(0, a.size - 1)
         a[p] += val
       end
     end
@@ -122,7 +123,7 @@ module Depth::Core
     end
 
     # Process region-specific query
-    private def process_region_query(a : Coverage, r : Region, tid : Int32) : {Bool, Int32}
+  private def process_region_query(a : Coverage, r : Region, tid : Int32, offset : Int32) : {Bool, Int32}
       found = false
       chrom_tid = UNKNOWN_CHROM_TID
 
@@ -130,19 +131,19 @@ module Depth::Core
       q_stop = (r.stop > 0 ? r.stop : @bam.header.target_len[tid].to_i32)
       region_str = "#{r.chrom}:#{q_start + 1}-#{q_stop}"
 
-      # Runner 側で coverage は既にサイズ調整/ゼロ化済みと想定し、ここでは二重初期化しない
+  # Assume Runner already sized/zeroed the coverage buffer; avoid duplicate initialization here
       @seen.clear
       @bam.query(region_str) do |rec|
         next if filtered_out?(rec)
         found = true unless found
-        accumulate_record!(rec, a)
+        accumulate_record!(rec, a, offset)
       end
 
       {found, chrom_tid}
     end
 
     # Process full BAM scan
-    private def process_full_scan(a : Coverage, tid : Int32) : {Bool, Int32}
+  private def process_full_scan(a : Coverage, tid : Int32) : {Bool, Int32}
       found = false
       chrom_tid = UNKNOWN_CHROM_TID
       current_tid = Int32::MIN
@@ -160,15 +161,15 @@ module Depth::Core
           found = true
         end
 
-        next if filtered_out?(rec)
-        accumulate_record!(rec, a)
+  next if filtered_out?(rec)
+  accumulate_record!(rec, a, 0)
       end
 
       {found, chrom_tid}
     end
 
     # Returns: CoverageResult enum values or tid
-    def calculate(a : Coverage, r : Region?) : Int32
+  def calculate(a : Coverage, r : Region?, offset : Int32 = 0) : Int32
       # Determine tid
       tid = CoverageResult::ChromNotFound.value
       if r
@@ -180,8 +181,8 @@ module Depth::Core
 
       return CoverageResult::ChromNotFound.value if tid == CoverageResult::ChromNotFound.value
 
-      found, chrom_tid = if r && tid >= 0
-                           process_region_query(a, r, tid)
+  found, chrom_tid = if r && tid >= 0
+           process_region_query(a, r, tid, offset)
                          else
                            process_full_scan(a, tid)
                          end
