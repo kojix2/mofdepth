@@ -150,6 +150,11 @@ describe "Functional comparison with mosdepth" do
       puts `ls -l #{temp_dir}`
       puts `ls -l #{mos_file}`
       puts `ls -l #{mof_file}`
+      puts "Comparing #{mos_file} and #{mof_file}"
+      puts "Contents of #{mos_file}:"
+      puts `zcat #{mos_file}`
+      puts "Contents of #{mof_file}:"
+      puts `zcat #{mof_file}`
       compare_files(mos_file, mof_file).should be_true
     end
   end
