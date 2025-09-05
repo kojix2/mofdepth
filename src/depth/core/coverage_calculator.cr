@@ -7,12 +7,20 @@ require "./coverage_utils"
 module Depth::Core
   class CoverageCalculator
     include Cigar
+    # touched tracking
+    @generation : UInt32
+    @marks : Array(UInt32)
+    @touched : Array(Int32)
+    @evbuf : Array(Tuple(Int32, Int32))
 
     def initialize(@bam : HTS::Bam, @options : Options)
       # store first-read of overlapping proper pairs to correct double-counting when mate arrives
       @seen = Hash(String, HTS::Bam::Record).new
-      # track maximum index in coverage buffer that we touched in the last calculation
-      @max_touched_idx = 0
+      # generation-based touched tracking (avoid full memset)
+      @generation = 1_u32
+      @marks = [] of UInt32  # same length as coverage capacity
+      @touched = [] of Int32 # indices touched during current generation
+      @evbuf = [] of Tuple(Int32, Int32)
     end
 
     # Check if record should be filtered out
@@ -39,13 +47,11 @@ module Depth::Core
     private def accumulate_record!(rec, coverage : Coverage, offset : Int32)
       if @options.fast_mode
         start_pos = (rec.pos.to_i32 - offset).clamp(0, coverage.size - 1)
-        coverage[start_pos] += 1
-        @max_touched_idx = {@max_touched_idx, start_pos}.max
+        mark_and_add!(coverage, start_pos, 1)
         endp = (rec.endpos.to_i32 - offset)
         endp = coverage.size - 1 if endp >= coverage.size
         endp = 0 if endp < 0
-        coverage[endp] -= 1
-        @max_touched_idx = {@max_touched_idx, endp}.max
+        mark_and_add!(coverage, endp, -1)
       elsif @options.fragment_mode
         return if rec.flag.read2? || !rec.flag.proper_pair? || rec.flag.supplementary?
         frag_start = Math.min(rec.pos, rec.mate_pos).to_i32 - offset
@@ -53,10 +59,8 @@ module Depth::Core
         end_pos = frag_start + frag_len
         end_pos = coverage.size - 1 if end_pos >= coverage.size
         startp = frag_start.clamp(0, coverage.size - 1)
-        coverage[startp] += 1
-        @max_touched_idx = {@max_touched_idx, startp}.max
-        coverage[end_pos] -= 1
-        @max_touched_idx = {@max_touched_idx, end_pos}.max
+        mark_and_add!(coverage, startp, 1)
+        mark_and_add!(coverage, end_pos, -1)
       else
         # Default (per-base) mode with mosdepth-like mate-overlap correction
         if @options.fast_mode == false && @options.fragment_mode == false &&
@@ -76,15 +80,15 @@ module Depth::Core
                 if e > s
                   s = (s - offset).clamp(0, coverage.size - 1)
                   e = (e - offset).clamp(0, coverage.size - 1)
-                  coverage[s] -= 1
-                  coverage[e] += 1
-                  @max_touched_idx = {@max_touched_idx, e}.max
+                  mark_and_add!(coverage, s, -1)
+                  mark_and_add!(coverage, e, 1)
                 end
               else
                 # Build combined start/end events for rec and mate, subtract where pair_depth==2
-                ses = [] of Tuple(Int32, Int32)
-                cigar_start_end_events(rec.cigar, rec_start).each { |p| ses << p }
-                cigar_start_end_events(mate.cigar, mate.pos.to_i32).each { |p| ses << p }
+                ses = @evbuf
+                ses.clear
+                cigar_fill_events!(rec.cigar, rec_start, ses)
+                cigar_fill_events!(mate.cigar, mate.pos.to_i32, ses)
                 ses.sort_by! { |(p, _)| p }
                 pair_depth = 0
                 last_pos = 0
@@ -95,9 +99,8 @@ module Depth::Core
                     if e > s
                       s = (s - offset).clamp(0, coverage.size - 1)
                       e = (e - offset).clamp(0, coverage.size - 1)
-                      coverage[s] -= 1
-                      coverage[e] += 1
-                      @max_touched_idx = {@max_touched_idx, e}.max
+                      mark_and_add!(coverage, s, -1)
+                      mark_and_add!(coverage, e, 1)
                     end
                   end
                   pair_depth += val
@@ -114,10 +117,11 @@ module Depth::Core
 
     # Apply cigar events into diff-array
     private def apply_cigar!(cigar, ipos : Int32, a : Coverage, offset : Int32)
-      cigar_start_end_events(cigar, ipos).each do |pos, val|
+      @evbuf.clear
+      cigar_fill_events!(cigar, ipos, @evbuf)
+      @evbuf.each do |pos, val|
         p = (pos - offset).clamp(0, a.size - 1)
-        a[p] += val
-        @max_touched_idx = {@max_touched_idx, p}.max
+        mark_and_add!(a, p, val)
       end
     end
 
@@ -125,10 +129,11 @@ module Depth::Core
     def initialize_coverage_array(coverage : Coverage, chrom_len : Int32)
       target_size = chrom_len + 1
       if coverage.size == target_size
-        coverage.fill(0)
+        # caller should reset; avoid full memset here
       else
         coverage.clear
         coverage.concat(Array(Int32).new(target_size, 0))
+        ensure_marks_capacity(target_size)
       end
     end
 
@@ -201,15 +206,40 @@ module Depth::Core
       tid >= 0 ? tid : chrom_tid
     end
 
-    # Reset only the portion of the coverage buffer that was actually touched
-    # to reduce large memset over the whole chromosome length.
-    def reset_coverage!(a : Coverage)
-      if @max_touched_idx > 0
-        # fill(value, start, count)
-        count = Math.min(@max_touched_idx + 1, a.size)
-        a.fill(0_i32, 0, count)
+    # Reset using touch marks: zero only indices written in current generation (up to limit)
+    def reset_coverage!(a : Coverage, limit : Int32)
+      if @touched.size > 0
+        lim = Math.min(limit, a.size)
+        @touched.each do |idx|
+          next if idx >= lim
+          a[idx] = 0
+        end
+        @touched.clear
       end
-      @max_touched_idx = 0
+      # advance generation (lazy clear of marks)
+      @generation &+= 1_u32
+      if @generation == 0_u32
+        # wrapped; hard reset marks
+        @marks.fill(0_u32)
+        @generation = 1_u32
+      end
+    end
+
+    private def ensure_marks_capacity(capacity : Int32)
+      if @marks.size < capacity
+        @marks.concat(Array(UInt32).new(capacity - @marks.size, 0_u32))
+      end
+    end
+
+    private def mark_and_add!(a : Coverage, idx : Int32, delta : Int32)
+      ensure_marks_capacity(a.size)
+      # mark once per generation
+      if @marks[idx] != @generation
+        @marks[idx] = @generation
+        @touched << idx
+        a[idx] = 0 if a[idx] != 0
+      end
+      a[idx] += delta
     end
   end
 end

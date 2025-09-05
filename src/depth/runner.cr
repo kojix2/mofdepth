@@ -79,7 +79,7 @@ module Depth
         # Create coverage calculator
         calculator = Core::CoverageCalculator.new(bam, opts)
 
-        # Reusable coverage buffer (resized as needed)
+        # Reusable coverage buffer (grow-only). We'll only use [0, effective_len]
         coverage = Core::Coverage.new(0)
 
         # Process each target
@@ -106,17 +106,26 @@ module Depth
           end
 
           target_size = effective_len + 1
-          if coverage.size == target_size
-            calculator.reset_coverage!(coverage)
-          else
-            coverage = Core::Coverage.new(target_size, 0)
+          if coverage.size < target_size
+            # grow once; keep capacity for reuse
+            coverage.concat(Array(Int32).new(target_size - coverage.size, 0))
           end
+          # partial reset only within effective window
+          calculator.reset_coverage!(coverage, target_size)
 
           tid = calculator.calculate(coverage, query_region, offset)
           next if tid == Core::CoverageResult::ChromNotFound.value
 
-          # Build final coverage from diff-array
-          self.class.prefix_sum!(coverage) if tid != Core::CoverageResult::NoData.value
+          # Build final coverage from diff-array for [0, effective_len]
+          if tid != Core::CoverageResult::NoData.value
+            i = 0
+            sum = 0
+            while i < target_size
+              sum += coverage[i]
+              coverage[i] = sum
+              i += 1
+            end
+          end
 
           # Write per-base intervals
           if output.f_perbase
@@ -124,7 +133,8 @@ module Depth
               write_len = (region && t.name == region.not_nil!.chrom) ? effective_len : t.length
               output.write_per_base_interval(t.name, offset, offset + write_len, 0)
             else
-              self.class.each_constant_segment(coverage) do |(s, e, v)|
+              # restrict per-base segments to [0, effective_len]
+              self.class.each_constant_segment(coverage, target_size - 1) do |(s, e, v)|
                 output.write_per_base_interval(t.name, s + offset, e + offset, v)
               end
             end
@@ -142,8 +152,8 @@ module Depth
 
           # Process per-chromosome distributions and stats
           if tid != Core::CoverageResult::NoData.value
-            self.class.bump_distribution!(global_dist, coverage, 0, coverage.size - 1)
-            chrom_stat = Stats::DepthStat.from_array(coverage, 0, coverage.size - 2)
+            self.class.bump_distribution!(global_dist, coverage, 0, target_size - 1)
+            chrom_stat = Stats::DepthStat.from_array(coverage, 0, target_size - 2)
             global_stat = global_stat + chrom_stat
             output.write_summary_line(t.name, chrom_stat)
           end
