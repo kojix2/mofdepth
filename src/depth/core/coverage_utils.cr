@@ -11,24 +11,6 @@ module Depth::Core
       end
     end
 
-    # Faster variant: prefix sum only over [start, stop] inclusive, assuming positions < start are already 0.
-    # After processing diff-array via this, callers can treat a[0...start] as 0 and a[stop+1...] unchanged.
-    def prefix_sum!(a : Coverage, start : Int32, stop : Int32)
-      return if a.empty?
-      s = start.clamp(0, a.size - 1)
-      e = stop.clamp(0, a.size - 1)
-      return if e < s
-
-      # compute running sum beginning at s; assumes initial carry is a[s]
-      sum = 0
-      i = s
-      while i <= e
-        sum += a[i]
-        a[i] = sum
-        i += 1
-      end
-    end
-
     # Yield intervals [start, stop) with constant depth value
     def each_constant_segment(a : Coverage, stop_at : Int32 = -1, &)
       return if a.size <= 1

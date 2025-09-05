@@ -79,6 +79,9 @@ module Depth
         # Create coverage calculator
         calculator = Core::CoverageCalculator.new(bam, opts)
 
+        # Allocate a reusable coverage buffer once (will be resized as needed)
+        coverage = Core::Coverage.new(0)
+
         # Process each target
         sub_targets.each do |t|
           # Skip if no regions for this chrom and we won't write per-base
@@ -86,7 +89,14 @@ module Depth
             next
           end
 
-          coverage = Core::Coverage.new(t.length + 1, 0)
+          # Ensure coverage buffer is sized for this target and reset to zeros
+          target_size = t.length + 1
+          if coverage.size == target_size
+            coverage.fill(0)
+          else
+            # 再確保して置き換え（concat 由来の大きな memmove を避ける）
+            coverage = Core::Coverage.new(target_size, 0)
+          end
 
           # Determine query region
           query_region = if region && t.name == region.not_nil!.chrom
@@ -98,32 +108,8 @@ module Depth
           tid = calculator.calculate(coverage, query_region)
           next if tid == Core::CoverageResult::ChromNotFound.value
 
-          if tid != Core::CoverageResult::NoData.value
-            # Only compute prefix sum over the touched region if we tracked any events
-            if calculator.min_event_pos != Int32::MAX
-              self.class.prefix_sum!(coverage, calculator.min_event_pos, calculator.max_event_pos)
-              # The rest of the array remains diff-format; to keep semantics for downstream consumers
-              # that expect full per-base coverage, we need a complete prefix. If downstream strictly
-              # requires full array, fall back to full prefix. Otherwise, this short prefix is enough
-              # because events outside [min,max] are zero. For simplicity, finish full prefix once events end.
-              i = calculator.max_event_pos + 1
-              sum = coverage[calculator.max_event_pos]
-              while i < coverage.size
-                sum += coverage[i]
-                coverage[i] = sum
-                i += 1
-              end
-              # fill leading zeros up to min_event_pos (already zeros)
-              j = 0
-              while j < calculator.min_event_pos
-                coverage[j] = 0
-                j += 1
-              end
-            else
-              # no events written (all zeros)
-              coverage.fill(0)
-            end
-          end
+          # Build final coverage from diff-array
+          self.class.prefix_sum!(coverage) if tid != Core::CoverageResult::NoData.value
 
           # Write per-base intervals
           if output.f_perbase
