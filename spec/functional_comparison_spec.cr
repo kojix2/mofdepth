@@ -27,12 +27,7 @@ def run_mosdepth(args : Array(String), prefix : String, temp_dir : String, mosde
 end
 
 def run_moffdepth(args : Array(String), prefix : String, temp_dir : String, test_bam : String) : Process::Status
-  full_args = args + [prefix, test_bam]
-  Process.run("crystal", ["run", "src/depth.cr", "--", "-M"] + full_args,
-    chdir: Dir.current,
-    env: {"PWD" => temp_dir},
-    output: Process::Redirect::Close,
-    error: Process::Redirect::Close)
+  TestBin.run(["-M"] + args, prefix, test_bam, temp_dir)
 end
 
 def compare_files(file1 : String, file2 : String) : Bool

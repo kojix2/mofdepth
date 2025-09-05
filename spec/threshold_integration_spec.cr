@@ -59,10 +59,10 @@ describe "Threshold Integration" do
 
       begin
         output.f_thresholds.should_not be_nil
-        File.exists?("#{prefix}.thresholds.bed").should be_true
+        File.exists?("#{prefix}.thresholds.bed.gz").should be_true
       ensure
         output.close_all
-        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.thresholds.bed.gz") if File.exists?("#{prefix}.thresholds.bed.gz")
         # remove both labels (depth and mosdepth)
         [
           "#{prefix}.depth.summary.txt",
@@ -119,10 +119,10 @@ describe "Threshold Integration" do
         output.write_thresholds_header(thresholds)
         output.close_all
 
-        content = File.read("#{prefix}.thresholds.bed")
+        content = File.read("#{prefix}.thresholds.bed.gz")
         content.should eq("#chrom\tstart\tend\tregion\t1X\t5X\t10X\n")
       ensure
-        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.thresholds.bed.gz") if File.exists?("#{prefix}.thresholds.bed.gz")
         [
           "#{prefix}.depth.summary.txt",
           "#{prefix}.depth.global.dist.txt",
@@ -155,13 +155,13 @@ describe "Threshold Integration" do
         output.write_threshold_counts("chr1", 100, 200, nil, [50, 30, 10])
         output.close_all
 
-        content = File.read("#{prefix}.thresholds.bed")
+        content = File.read("#{prefix}.thresholds.bed.gz")
         lines = content.split('\n')
         lines[0].should eq("#chrom\tstart\tend\tregion\t1X\t5X\t10X")
         lines[1].should eq("chr1\t0\t100\tregion1\t100\t80\t20")
         lines[2].should eq("chr1\t100\t200\tunknown\t50\t30\t10")
       ensure
-        File.delete("#{prefix}.thresholds.bed") if File.exists?("#{prefix}.thresholds.bed")
+        File.delete("#{prefix}.thresholds.bed.gz") if File.exists?("#{prefix}.thresholds.bed.gz")
         File.delete("#{prefix}.depth.summary.txt") if File.exists?("#{prefix}.depth.summary.txt")
         File.delete("#{prefix}.depth.global.dist.txt") if File.exists?("#{prefix}.depth.global.dist.txt")
         File.delete("#{prefix}.depth.region.dist.txt") if File.exists?("#{prefix}.depth.region.dist.txt")

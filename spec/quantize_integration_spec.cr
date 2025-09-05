@@ -52,8 +52,8 @@ describe "Quantize Integration" do
       output.close_all
 
       # Verify file exists and has content
-      File.exists?("#{prefix}.quantized.bed").should be_true
-      content = File.read("#{prefix}.quantized.bed")
+      File.exists?("#{prefix}.quantized.bed.gz").should be_true
+      content = File.read("#{prefix}.quantized.bed.gz")
       content.should contain("chr1\t0\t100\t0:1")
       content.should contain("chr1\t100\t200\t1:4")
     end
