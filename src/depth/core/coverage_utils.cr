@@ -35,8 +35,9 @@ module Depth::Core
         i += 1
       end
 
+      # Final segment: cap at requested stop (exclusive)
       if last_i < stop
-        yield({last_i, a.size - 1, last_depth})
+        yield({last_i, stop, last_depth})
       elsif last_i != i
         yield({last_i - 1, i, last_depth})
       else
