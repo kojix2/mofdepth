@@ -7,10 +7,16 @@ require "./coverage_utils"
 module Depth::Core
   class CoverageCalculator
     include Cigar
+    # track min/max indices written for current chromosome
+    @min_event_pos : Int32? = Int32::MAX
+    @max_event_pos : Int32? = 0
 
     def initialize(@bam : HTS::Bam, @options : Options)
       # store first-read of overlapping proper pairs to correct double-counting when mate arrives
       @seen = Hash(String, HTS::Bam::Record).new
+      # track min/max indices written into the diff array for current chromosome processing
+      @min_event_pos = Int32::MAX
+      @max_event_pos = 0
     end
 
     # Check if record should be filtered out
@@ -36,25 +42,25 @@ module Depth::Core
     # Calculate coverage for a single record
     private def accumulate_record!(rec, coverage : Coverage)
       if @options.fast_mode
-        start_pos = rec.pos.clamp(0, coverage.size - 1)
-        coverage[start_pos] += 1
-        endp = rec.endpos
+        start_pos = rec.pos.to_i32.clamp(0, coverage.size - 1)
+        bump!(coverage, start_pos, 1)
+        endp = rec.endpos.to_i32
         endp = coverage.size - 1 if endp >= coverage.size
-        coverage[endp] -= 1
+        bump!(coverage, endp, -1)
       elsif @options.fragment_mode
         return if rec.flag.read2? || !rec.flag.proper_pair? || rec.flag.supplementary?
-        frag_start = Math.min(rec.pos, rec.mate_pos)
+        frag_start = Math.min(rec.pos, rec.mate_pos).to_i32
         frag_len = rec.isize.abs
         end_pos = frag_start + frag_len
         end_pos = coverage.size - 1 if end_pos >= coverage.size
-        coverage[frag_start] += 1
-        coverage[end_pos] -= 1
+        bump!(coverage, frag_start, 1)
+        bump!(coverage, end_pos, -1)
       else
         # Default (per-base) mode with mosdepth-like mate-overlap correction
         if @options.fast_mode == false && @options.fragment_mode == false &&
            rec.flag.proper_pair? && !rec.flag.supplementary? && rec.tid == rec.mtid && rec.mate_pos >= 0
           rec_start = rec.pos.to_i32
-          rec_stop = rec.endpos
+          rec_stop = rec.endpos.to_i32
           # If this read overlaps its mate and is the earlier (or equal) one, store it; otherwise, if mate was stored, correct overlap now
           if rec_stop > rec.mate_pos && (rec_start < rec.mate_pos || (rec_start == rec.mate_pos && !@seen.has_key?(rec.qname)))
             # store a clone since records are reused
@@ -64,12 +70,12 @@ module Depth::Core
               # Fast path: both reads have single M op
               if rec.cigar.size == 1 && mate.cigar.size == 1
                 s = [rec_start, mate.pos.to_i32].max
-                e = [rec_stop, mate.endpos].min
+                e = [rec_stop, mate.endpos.to_i32].min
                 if e > s
                   s = s.clamp(0, coverage.size - 1)
                   e = e.clamp(0, coverage.size - 1)
-                  coverage[s] -= 1
-                  coverage[e] += 1
+                  bump!(coverage, s, -1)
+                  bump!(coverage, e, 1)
                 end
               else
                 # Build combined start/end events for rec and mate, subtract where pair_depth==2
@@ -86,8 +92,8 @@ module Depth::Core
                     if e > s
                       s = s.clamp(0, coverage.size - 1)
                       e = e.clamp(0, coverage.size - 1)
-                      coverage[s] -= 1
-                      coverage[e] += 1
+                      bump!(coverage, s, -1)
+                      bump!(coverage, e, 1)
                     end
                   end
                   pair_depth += val
@@ -98,14 +104,42 @@ module Depth::Core
           end
         end
         # Always add coverage for this record after possible overlap correction step
-        inc_coverage(rec.cigar, rec.pos.to_i32, coverage)
+        apply_cigar!(rec.cigar, rec.pos.to_i32, coverage)
+      end
+    end
+
+    # bump diff-array at clamped position and track min/max writes
+    private def bump!(a : Coverage, pos : Int32, val : Int32)
+      return if a.empty?
+      p = pos.clamp(0, a.size - 1)
+      if (m = @min_event_pos).nil? || p < m
+        @min_event_pos = p
+      end
+      if (x = @max_event_pos).nil? || p > x
+        @max_event_pos = p
+      end
+      a[p] += val
+    end
+
+    # Apply cigar events using bump! to track min/max written indices
+    private def apply_cigar!(cigar, ipos : Int32, a : Coverage)
+      cigar_start_end_events(cigar, ipos).each do |pos, val|
+        bump!(a, pos, val)
       end
     end
 
     # Initialize coverage array for a chromosome
     def initialize_coverage_array(coverage : Coverage, chrom_len : Int32)
-      coverage.clear
-      coverage.concat(Array.new(chrom_len + 1, 0))
+      target_size = chrom_len + 1
+      if coverage.size == target_size
+        coverage.fill(0)
+      else
+        coverage.clear
+        coverage.concat(Array(Int32).new(target_size, 0))
+      end
+      # reset min/max tracking for this chromosome
+      @min_event_pos = Int32::MAX
+      @max_event_pos = 0
     end
 
     # Process region-specific query
@@ -187,5 +221,9 @@ module Depth::Core
       return CoverageResult::NoData.value unless found
       tid >= 0 ? tid : chrom_tid
     end
+
+    # Expose the min/max indices updated during last calculate() call
+    getter min_event_pos : Int32 { @min_event_pos || Int32::MAX }
+    getter max_event_pos : Int32 { @max_event_pos || 0 }
   end
 end

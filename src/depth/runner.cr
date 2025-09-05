@@ -99,7 +99,30 @@ module Depth
           next if tid == Core::CoverageResult::ChromNotFound.value
 
           if tid != Core::CoverageResult::NoData.value
-            self.class.prefix_sum!(coverage)
+            # Only compute prefix sum over the touched region if we tracked any events
+            if calculator.min_event_pos != Int32::MAX
+              self.class.prefix_sum!(coverage, calculator.min_event_pos, calculator.max_event_pos)
+              # The rest of the array remains diff-format; to keep semantics for downstream consumers
+              # that expect full per-base coverage, we need a complete prefix. If downstream strictly
+              # requires full array, fall back to full prefix. Otherwise, this short prefix is enough
+              # because events outside [min,max] are zero. For simplicity, finish full prefix once events end.
+              i = calculator.max_event_pos + 1
+              sum = coverage[calculator.max_event_pos]
+              while i < coverage.size
+                sum += coverage[i]
+                coverage[i] = sum
+                i += 1
+              end
+              # fill leading zeros up to min_event_pos (already zeros)
+              j = 0
+              while j < calculator.min_event_pos
+                coverage[j] = 0
+                j += 1
+              end
+            else
+              # no events written (all zeros)
+              coverage.fill(0)
+            end
           end
 
           # Write per-base intervals
