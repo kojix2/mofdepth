@@ -3,9 +3,14 @@ module Depth::Stats
   class IntHistogram
     getter counts : Array(Int32)
     getter n : Int32 = 0
+    # Track which bins were touched to avoid full-array zeroing on clear
+    @mark : Array(Bool)
+    @touched : Array(Int32)
 
     def initialize(size : Int32 = 65_536)
       @counts = size > 0 ? Array(Int32).new(size, 0) : [] of Int32
+      @mark = size > 0 ? Array(Bool).new(size, false) : [] of Bool
+      @touched = [] of Int32
       @n = 0
     end
 
@@ -13,6 +18,10 @@ module Depth::Stats
       @n += 1
       v = value < 0 ? raise ArgumentError.new("negative depth: #{value}") : value
       idx = v < counts.size ? v : counts.size - 1
+      unless @mark[idx]
+        @mark[idx] = true
+        @touched << idx
+      end
       counts[idx] += 1
     end
 
@@ -30,7 +39,12 @@ module Depth::Stats
     def clear
       return if n == 0
       @n = 0
-      counts.fill(0)
+      # zero only touched bins and reset marks
+      @touched.each do |i|
+        counts[i] = 0
+        @mark[i] = false
+      end
+      @touched.clear
     end
   end
 end
