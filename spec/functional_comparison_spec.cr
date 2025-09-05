@@ -147,7 +147,7 @@ describe "Functional comparison with mosdepth" do
 
       # Compare contents
 
-      `diff <(zcat #{mos_file}) <(zcat #{mof_file})`
+      puts `diff <$(zcat #{mos_file}) <$(zcat #{mof_file})`
       compare_files(mos_file, mof_file).should be_true
     end
   end
