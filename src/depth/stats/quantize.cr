@@ -79,17 +79,23 @@ module Depth::Stats
     end
 
     # Generate quantized depth segments
-    # Yields tuples of (start, stop, label)
-    def self.gen_quantized(quants : Array(Int32), coverage : Array(Int32), & : Tuple(Int32, Int32, String) ->)
-      return if coverage.empty? || quants.empty?
+    # limit: number of elements from coverage to consider (typically target_size)
+    # Yields tuples of (start, stop, label) over [0, limit-1]
+    def self.gen_quantized(quants : Array(Int32), coverage : Array(Int32), limit : Int32, & : Tuple(Int32, Int32, String) ->)
+      return if quants.empty?
+      return if coverage.empty?
+      return if limit <= 1
 
       lookup = make_lookup(quants)
       return if lookup.empty?
 
+      # Bound the iteration to the requested limit (effective length + 1)
+      lim = Math.min(limit, coverage.size)
+
       last_quantized = linear_search(coverage[0], quants)
       last_pos = 0
 
-      (0...(coverage.size - 1)).each do |pos|
+      (0...(lim - 1)).each do |pos|
         depth = coverage[pos]
         quantized = linear_search(depth, quants)
 
@@ -104,9 +110,14 @@ module Depth::Stats
       end
 
       # Handle the final segment
-      if last_quantized != -1 && last_pos < coverage.size - 1 && last_quantized < lookup.size
-        yield({last_pos, coverage.size - 1, lookup[last_quantized]})
+      if last_quantized != -1 && last_pos < lim - 1 && last_quantized < lookup.size
+        yield({last_pos, lim - 1, lookup[last_quantized]})
       end
+    end
+
+    # Backward-compatible overload: consume entire coverage array
+    def self.gen_quantized(quants : Array(Int32), coverage : Array(Int32), &block : Tuple(Int32, Int32, String) ->)
+      gen_quantized(quants, coverage, coverage.size, &block)
     end
   end
 end

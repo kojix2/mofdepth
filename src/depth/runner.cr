@@ -142,7 +142,7 @@ module Depth
 
           # Write quantized intervals
           if output.f_quantized && @config.has_quantize?
-            write_quantized_intervals(t, coverage, tid, output, offset)
+            write_quantized_intervals(t, coverage, tid, output, offset, target_size)
           end
 
           # Process regions (window or BED)
@@ -354,7 +354,7 @@ module Depth
       end
     end
 
-    private def write_quantized_intervals(t : Core::Target, coverage : Core::Coverage, tid : Int32, output : FileIO::OutputManager, offset : Int32)
+    private def write_quantized_intervals(t : Core::Target, coverage : Core::Coverage, tid : Int32, output : FileIO::OutputManager, offset : Int32, target_size : Int32)
       quants = @config.quantize_args
       return if quants.empty?
 
@@ -364,13 +364,13 @@ module Depth
           lookup = Stats::Quantize.make_lookup(quants)
           # No data in this (sub)region
           unless lookup.empty?
-            # if region-shrunk, limit to effective_len; otherwise whole chrom
-            output.write_quantized_interval(t.name, offset, offset + (coverage.size - 1), lookup[0])
+            # write exactly over effective length [0, target_size-1]
+            output.write_quantized_interval(t.name, offset, offset + (target_size - 1), lookup[0])
           end
         end
       else
         # Generate quantized segments using the quantize module
-        Stats::Quantize.gen_quantized(quants, coverage) do |start, stop, label|
+        Stats::Quantize.gen_quantized(quants, coverage, target_size) do |start, stop, label|
           output.write_quantized_interval(t.name, start + offset, stop + offset, label)
         end
       end
