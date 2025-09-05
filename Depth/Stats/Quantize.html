@@ -251,7 +251,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/moffdepth/blob/c7a3c98879ea3d5d72bbcf3a9c5c2630f5452e65/src/depth/stats/quantize.cr#L2" target="_blank">
+      <a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L2" target="_blank">
         depth/stats/quantize.cr
       </a>
     
@@ -276,9 +276,16 @@
   <ul class="list-summary">
     
       <li class="entry-summary">
-        <a href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2C%26%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method" class="signature"><strong>.gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), & : Tuple(Int32, Int32, String) -> )</a>
+        <a href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2Climit%3AInt32%2C%26%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method" class="signature"><strong>.gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), limit : Int32, & : Tuple(Int32, Int32, String) -> )</a>
         
-          <div class="summary"><p>Generate quantized depth segments Yields tuples of (start, stop, label)</p></div>
+          <div class="summary"><p>Generate quantized depth segments limit: number of elements from coverage to consider (typically target_size) Yields tuples of (start, stop, label) over [0, limit-1]</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2C%26block%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method" class="signature"><strong>.gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), &block : Tuple(Int32, Int32, String) -> )</a>
+        
+          <div class="summary"><p>Backward-compatible overload: consume entire coverage array</p></div>
         
       </li>
     
@@ -327,24 +334,46 @@
     Class Method Detail
   </h2>
   
-    <div class="entry-detail" id="gen_quantized(quants:Array(Int32),coverage:Array(Int32),&amp;:Tuple(Int32,Int32,String)-&gt;)-class-method">
+    <div class="entry-detail" id="gen_quantized(quants:Array(Int32),coverage:Array(Int32),limit:Int32,&amp;:Tuple(Int32,Int32,String)-&gt;)-class-method">
       <div class="signature">
         
-        def self.<strong>gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), & : Tuple(Int32, Int32, String) -> )
+        def self.<strong>gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), limit : Int32, & : Tuple(Int32, Int32, String) -> )
 
-        <a class="method-permalink" href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2C%26%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method">#</a>
+        <a class="method-permalink" href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2Climit%3AInt32%2C%26%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method">#</a>
       </div>
       
         <div class="doc">
           
           <p>Generate quantized depth segments
-Yields tuples of (start, stop, label)</p>
+limit: number of elements from coverage to consider (typically target_size)
+Yields tuples of (start, stop, label) over [0, limit-1]</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/c7a3c98879ea3d5d72bbcf3a9c5c2630f5452e65/src/depth/stats/quantize.cr#L83" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L84" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="gen_quantized(quants:Array(Int32),coverage:Array(Int32),&amp;block:Tuple(Int32,Int32,String)-&gt;)-class-method">
+      <div class="signature">
+        
+        def self.<strong>gen_quantized</strong>(quants : Array(Int32), coverage : Array(Int32), &block : Tuple(Int32, Int32, String) -> )
+
+        <a class="method-permalink" href="#gen_quantized%28quants%3AArray%28Int32%29%2Ccoverage%3AArray%28Int32%29%2C%26block%3ATuple%28Int32%2CInt32%2CString%29-%3E%29-class-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Backward-compatible overload: consume entire coverage array</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L119" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -368,7 +397,7 @@ Examples:
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/c7a3c98879ea3d5d72bbcf3a9c5c2630f5452e65/src/depth/stats/quantize.cr#L7" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L7" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -390,7 +419,7 @@ Returns -1 if value is outside all bins</p>
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/c7a3c98879ea3d5d72bbcf3a9c5c2630f5452e65/src/depth/stats/quantize.cr#L66" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L66" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -413,7 +442,7 @@ Examples:
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/c7a3c98879ea3d5d72bbcf3a9c5c2630f5452e65/src/depth/stats/quantize.cr#L40" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/91ae56de5e6db5c574f524d0e64f0da2b9264c9e/src/depth/stats/quantize.cr#L40" target="_blank">View source</a>]
         
       </div>
     </div>
