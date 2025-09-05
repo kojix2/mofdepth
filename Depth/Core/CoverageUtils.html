@@ -251,7 +251,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/moffdepth/blob/608b5a11cc706f61b2b6d0c43d49be7d0f9ab65c/src/depth/core/coverage_utils.cr#L2" target="_blank">
+      <a href="https://github.com/kojix2/moffdepth/blob/f28622cc6f31f52a2305d38b5743089f17d9a46c/src/depth/core/coverage_utils.cr#L2" target="_blank">
         depth/core/coverage_utils.cr
       </a>
     
@@ -283,6 +283,13 @@
         <a href="#each_constant_segment%28a%3ACoverage%2Cstop_at%3AInt32%3D-1%2C%26%29-instance-method" class="signature"><strong>#each_constant_segment</strong>(a : Coverage, stop_at : Int32 = <span class="n">-1</span>, &)</a>
         
           <div class="summary"><p>Yield intervals [start, stop) with constant depth value</p></div>
+        
+      </li>
+    
+      <li class="entry-summary">
+        <a href="#prefix_sum%21%28a%3ACoverage%2Cstart%3AInt32%2Cstop%3AInt32%29-instance-method" class="signature"><strong>#prefix_sum!</strong>(a : Coverage, start : Int32, stop : Int32)</a>
+        
+          <div class="summary"><p>Faster variant: prefix sum only over [start, stop] inclusive, assuming positions &lt; start are already 0.</p></div>
         
       </li>
     
@@ -333,7 +340,29 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/608b5a11cc706f61b2b6d0c43d49be7d0f9ab65c/src/depth/core/coverage_utils.cr#L15" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/f28622cc6f31f52a2305d38b5743089f17d9a46c/src/depth/core/coverage_utils.cr#L33" target="_blank">View source</a>]
+        
+      </div>
+    </div>
+  
+    <div class="entry-detail" id="prefix_sum!(a:Coverage,start:Int32,stop:Int32)-instance-method">
+      <div class="signature">
+        
+        def <strong>prefix_sum!</strong>(a : <a href="../../Depth/Core/Coverage.html">Coverage</a>, start : Int32, stop : Int32)
+
+        <a class="method-permalink" href="#prefix_sum%21%28a%3ACoverage%2Cstart%3AInt32%2Cstop%3AInt32%29-instance-method">#</a>
+      </div>
+      
+        <div class="doc">
+          
+          <p>Faster variant: prefix sum only over [start, stop] inclusive, assuming positions &lt; start are already 0.
+After processing diff-array via this, callers can treat a[0...start] as 0 and a[stop+1...] unchanged.</p>
+        </div>
+      
+      <br/>
+      <div>
+        
+          [<a href="https://github.com/kojix2/moffdepth/blob/f28622cc6f31f52a2305d38b5743089f17d9a46c/src/depth/core/coverage_utils.cr#L16" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -354,7 +383,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/608b5a11cc706f61b2b6d0c43d49be7d0f9ab65c/src/depth/core/coverage_utils.cr#L4" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/f28622cc6f31f52a2305d38b5743089f17d9a46c/src/depth/core/coverage_utils.cr#L4" target="_blank">View source</a>]
         
       </div>
     </div>
