@@ -267,7 +267,7 @@
   </h2>
   
     
-      <a href="https://github.com/kojix2/moffdepth/blob/afbdd0d4134759ca4ad84f6cc34183edf978e7c2/src/depth/core/coverage_calculator.cr#L8" target="_blank">
+      <a href="https://github.com/kojix2/moffdepth/blob/5dee998983b0a9e3e1fe1f8e8998890c4ac056b7/src/depth/core/coverage_calculator.cr#L8" target="_blank">
         depth/core/coverage_calculator.cr
       </a>
     
@@ -327,9 +327,9 @@
       </li>
     
       <li class="entry-summary">
-        <a href="#reset_coverage%21%28a%3ACoverage%29-instance-method" class="signature"><strong>#reset_coverage!</strong>(a : Coverage)</a>
+        <a href="#reset_coverage%21%28a%3ACoverage%2Climit%3AInt32%29-instance-method" class="signature"><strong>#reset_coverage!</strong>(a : Coverage, limit : Int32)</a>
         
-          <div class="summary"><p>Reset only the portion of the coverage buffer that was actually touched to reduce large memset over the whole chromosome length.</p></div>
+          <div class="summary"><p>Reset using touch marks: zero only indices written in current generation (up to limit)</p></div>
         
       </li>
     
@@ -343,6 +343,16 @@
 
   <h3>Instance methods inherited from module <code><a href="../../Depth/Core/Cigar.html">Depth::Core::Cigar</a></code></h3>
   
+  
+    <a href="../../Depth/Core/Cigar.html#cigar_each_segment%28cigar%2Cipos%3AInt32%2C%26%3ATuple%28Int32%2CInt32%29-%3E%29-instance-method" class="tooltip">
+      <span>cigar_each_segment(cigar, ipos : Int32, & : Tuple(Int32, Int32) -> )</span>
+    cigar_each_segment</a>, 
+    
+  
+    <a href="../../Depth/Core/Cigar.html#cigar_fill_events%21%28cigar%2Cipos%3AInt32%2Cevbuf%3AArray%28Tuple%28Int32%2CInt32%29%29%29%3ANil-instance-method" class="tooltip">
+      <span>cigar_fill_events!(cigar, ipos : Int32, evbuf : Array(Tuple(Int32, Int32))) : Nil</span>
+    cigar_fill_events!</a>, 
+    
   
     <a href="../../Depth/Core/Cigar.html#cigar_segments%28cigar%2Cipos%3AInt32%29%3AArray%28Tuple%28Int32%2CInt32%29%29-instance-method" class="tooltip">
       <span>cigar_segments(cigar, ipos : Int32) : Array(Tuple(Int32, Int32))</span>
@@ -420,7 +430,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/afbdd0d4134759ca4ad84f6cc34183edf978e7c2/src/depth/core/coverage_calculator.cr#L11" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/5dee998983b0a9e3e1fe1f8e8998890c4ac056b7/src/depth/core/coverage_calculator.cr#L16" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -457,7 +467,7 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/afbdd0d4134759ca4ad84f6cc34183edf978e7c2/src/depth/core/coverage_calculator.cr#L182" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/5dee998983b0a9e3e1fe1f8e8998890c4ac056b7/src/depth/core/coverage_calculator.cr#L187" target="_blank">View source</a>]
         
       </div>
     </div>
@@ -478,29 +488,28 @@
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/afbdd0d4134759ca4ad84f6cc34183edf978e7c2/src/depth/core/coverage_calculator.cr#L125" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/5dee998983b0a9e3e1fe1f8e8998890c4ac056b7/src/depth/core/coverage_calculator.cr#L129" target="_blank">View source</a>]
         
       </div>
     </div>
   
-    <div class="entry-detail" id="reset_coverage!(a:Coverage)-instance-method">
+    <div class="entry-detail" id="reset_coverage!(a:Coverage,limit:Int32)-instance-method">
       <div class="signature">
         
-        def <strong>reset_coverage!</strong>(a : <a href="../../Depth/Core/Coverage.html">Coverage</a>)
+        def <strong>reset_coverage!</strong>(a : <a href="../../Depth/Core/Coverage.html">Coverage</a>, limit : Int32)
 
-        <a class="method-permalink" href="#reset_coverage%21%28a%3ACoverage%29-instance-method">#</a>
+        <a class="method-permalink" href="#reset_coverage%21%28a%3ACoverage%2Climit%3AInt32%29-instance-method">#</a>
       </div>
       
         <div class="doc">
           
-          <p>Reset only the portion of the coverage buffer that was actually touched
-to reduce large memset over the whole chromosome length.</p>
+          <p>Reset using touch marks: zero only indices written in current generation (up to limit)</p>
         </div>
       
       <br/>
       <div>
         
-          [<a href="https://github.com/kojix2/moffdepth/blob/afbdd0d4134759ca4ad84f6cc34183edf978e7c2/src/depth/core/coverage_calculator.cr#L206" target="_blank">View source</a>]
+          [<a href="https://github.com/kojix2/moffdepth/blob/5dee998983b0a9e3e1fe1f8e8998890c4ac056b7/src/depth/core/coverage_calculator.cr#L210" target="_blank">View source</a>]
         
       </div>
     </div>
