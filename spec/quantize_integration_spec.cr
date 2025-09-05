@@ -7,8 +7,8 @@ require "../src/depth/stats/quantize"
 module TestCleanup
   def self.cleanup_test_files(prefix : String)
     files_to_clean = [
-      "#{prefix}.quantized.bed",
-      "#{prefix}.per-base.bed",
+  "#{prefix}.quantized.bed.gz",
+  "#{prefix}.per-base.bed.gz",
       # summary/dist both styles
       "#{prefix}.depth.summary.txt",
       "#{prefix}.depth.global.dist.txt",
@@ -16,8 +16,8 @@ module TestCleanup
       "#{prefix}.mosdepth.summary.txt",
       "#{prefix}.mosdepth.global.dist.txt",
       "#{prefix}.mosdepth.region.dist.txt",
-      "#{prefix}.regions.bed",
-      "#{prefix}.thresholds.bed",
+  "#{prefix}.regions.bed.gz",
+  "#{prefix}.thresholds.bed.gz",
     ]
 
     files_to_clean.each do |file|
@@ -51,9 +51,9 @@ describe "Quantize Integration" do
 
       output.close_all
 
-      # Verify file exists and has content
-      File.exists?("#{prefix}.quantized.bed.gz").should be_true
-      content = File.read("#{prefix}.quantized.bed.gz")
+  # Verify file exists and has content
+  File.exists?("#{prefix}.quantized.bed.gz").should be_true
+  content = `zcat #{prefix}.quantized.bed.gz`
       content.should contain("chr1\t0\t100\t0:1")
       content.should contain("chr1\t100\t200\t1:4")
     end
@@ -72,8 +72,8 @@ describe "Quantize Integration" do
 
       output.close_all
 
-      # Verify file does not exist
-      File.exists?("#{prefix}.quantized.bed").should be_false
+  # Verify file does not exist
+  File.exists?("#{prefix}.quantized.bed.gz").should be_false
     end
   end
 

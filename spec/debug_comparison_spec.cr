@@ -43,14 +43,16 @@ end
 def run_moffdepth_debug(args : Array(String), prefix : String, temp_dir : String, test_bam : String)
   full_args = args + [prefix, test_bam]
 
-  puts "Running moffdepth: crystal run src/depth.cr -- #{full_args.join(" ")}"
+  bin = TestBin.binary
+  puts "Running moffdepth: #{bin} #{(args + [prefix, test_bam]).join(" ")}"
   puts "Working directory: #{Dir.current}"
   puts "Output directory: #{temp_dir}"
 
   stdout = IO::Memory.new
   stderr = IO::Memory.new
 
-  result = Process.run("crystal", ["run", "src/depth.cr", "--"] + full_args,
+  TestBin.ensure_built!
+  result = Process.run(bin, args + [prefix, test_bam],
     chdir: Dir.current,
     env: {"PWD" => temp_dir},
     output: stdout,
