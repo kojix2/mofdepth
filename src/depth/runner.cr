@@ -79,10 +79,10 @@ module Depth
         # Create coverage calculator
         calculator = Core::CoverageCalculator.new(bam, opts)
 
-  # Reusable coverage buffer (resized as needed)
+        # Reusable coverage buffer (resized as needed)
         coverage = Core::Coverage.new(0)
 
-  # Process each target
+        # Process each target
         sub_targets.each do |t|
           # Skip if no regions for this chrom and we won't write per-base
           if @config.no_per_base? && bed_map && !bed_map.not_nil!.has_key?(t.name)
@@ -107,7 +107,7 @@ module Depth
 
           target_size = effective_len + 1
           if coverage.size == target_size
-            coverage.fill(0)
+            calculator.reset_coverage!(coverage)
           else
             coverage = Core::Coverage.new(target_size, 0)
           end
@@ -366,7 +366,7 @@ module Depth
       end
     end
 
-  private def count_threshold_bases(coverage : Core::Coverage, start : Int32, stop : Int32,
+    private def count_threshold_bases(coverage : Core::Coverage, start : Int32, stop : Int32,
                                       thresholds : Array(Int32), tid : Int32) : Array(Int32)
       counts = Array(Int32).new(thresholds.size, 0)
 
